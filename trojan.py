@@ -47,7 +47,7 @@ def asteroid(run_time, t_eval):
             0,
         ]
     )
-    print(y0[0])
+
     return solve_ivp(f, (0, run_time), y0, t_eval=t_eval, method="LSODA")
 
 
