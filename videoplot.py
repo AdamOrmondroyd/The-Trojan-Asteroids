@@ -31,7 +31,7 @@ def animate(i):
     sun_line.set_data(sun_position[0], sun_position[1])
     j_position = r_j(sol.t[i])
     j_line.set_data(j_position[0], j_position[1])
-    time_text.set_text(np.round(sol.t[i], 3) + " years")
+    time_text.set_text(str(np.round(sol.t[i], 3)) + " years")
     return (trojan_line, sun_line, j_line, time_text)
 
 
