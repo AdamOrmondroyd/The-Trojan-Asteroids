@@ -29,7 +29,7 @@ def derivs(t, y):
 def asteroid(run_time, t_eval):
     """Trajectory of asteroid calculated using solve_ivp"""
     theta0 = np.pi / 3
-    y0 = np.array([R * np.cos(theta0) + R_SUN[0], R * np.sin(theta0), 0, 0.01, 0, 0,])
+    y0 = np.array([R * np.cos(theta0) + R_SUN[0], R * np.sin(theta0), 0, 0, 0, 0,])
 
     return solve_ivp(derivs, (0, run_time), y0, t_eval=t_eval, method="LSODA")
 
