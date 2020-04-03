@@ -5,7 +5,7 @@ from stationaryframe import asteroid, r_sun, r_j
 from constants import R, R_SUN, R_J
 
 end_time = 100
-points_per_year = 1000
+points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 sol = asteroid(run_time=end_time, t_eval=ts)
@@ -21,8 +21,10 @@ fig = plt.figure()
 ax = plt.axes(xlim=(-6, 6), ylim=(-6, 6), aspect="equal")
 time_text = ax.text(0.02, 0.95, "", transform=ax.transAxes)
 (trojan_line,) = ax.plot([], [], "g+")
-(sun_line,) = ax.plot([], [], "y+")
-(j_line,) = ax.plot([], [], "r+")
+(sun_line,) = ax.plot(
+    [], [], color="orange", marker="*", markersize=20, linestyle="None"
+)
+(j_line,) = ax.plot([], [], color="red", marker="o", markersize=10, linestyle="None")
 
 
 def animate(i):
@@ -39,7 +41,8 @@ anim = FuncAnimation(
     fig,
     animate,
     frames=end_time * points_per_year,
-    interval=int(1 / points_per_year),
+    # interval=int(0.1 / points_per_year),
+    interval=1 / 30,
     blit=True,
 )
 plt.show()
