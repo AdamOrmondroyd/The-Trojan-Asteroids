@@ -11,14 +11,46 @@ def omega_cross(r):
     return np.array([-W * r[1], W * r[0], 0])
 
 
-def video_plot(end_time, fps, save_animation=False):
+def video_plot(
+    run_time,
+    fps,
+    seconds_per_year,
+    num_greeks,
+    num_trojans,
+    position_spread,
+    save_animation=False,
+    file_name="movie",
+):
+    """Makes an animation in the stationary frame of a random selection about the Lagrangian points"""
 
-    ts = np.linspace(
-        0, end_time, int(end_time * fps)
-    )  # set so 1 Earth year will take 1 second in the animation
+    num_points = int(run_time * fps * seconds_per_year)
+    ts = np.linspace(0, run_time, num_points)
 
-    greek_sol = asteroid(run_time=end_time, t_eval=ts, r_0=L4, v_0=omega_cross(L4))
-    trojan_sol = asteroid(run_time=end_time, t_eval=ts, r_0=L5, v_0=omega_cross(L5))
+    greek_y0s = np.zeros((num_greeks, num_points))
+    greek_y1s = np.zeros((num_greeks, num_points))
+
+    for i in range(num_greeks):
+        offset = (np.random.rand(3) - 0.5) * np.array(
+            [position_spread, position_spread, 0]
+        )  # no z offset
+        r_0 = L4 + offset
+        v_0 = omega_cross(r_0)
+        sol = asteroid(run_time, ts, r_0, v_0)
+        greek_y0s[i] = sol.y[0]
+        greek_y1s[i] = sol.y[1]
+
+    trojan_y0s = np.zeros((num_trojans, num_points))
+    trojan_y1s = np.zeros((num_trojans, num_points))
+
+    for i in range(num_trojans):
+        offset = (np.random.rand(3) - 0.5) * np.array(
+            [position_spread, position_spread, 0]
+        )  # no z offset
+        r_0 = L5 + offset
+        v_0 = omega_cross(r_0)
+        sol = asteroid(run_time, ts, r_0, v_0)
+        trojan_y0s[i] = sol.y[0]
+        trojan_y1s[i] = sol.y[1]
 
     fig = plt.figure(figsize=(7, 7))
     ax = plt.axes(xlim=(-6, 6), ylim=(-6, 6), aspect="equal")
@@ -36,27 +68,27 @@ def video_plot(end_time, fps, save_animation=False):
         linestyle="None",
     )
     (l4_line,) = ax.plot(
-        [], [], label="L$_4$", color="blue", marker="+", markersize=5, linestyle="None"
+        [], [], label="L$_4$", color="blue", marker="+", markersize=10, linestyle="None"
     )
     (l5_line,) = ax.plot(
-        [], [], label="L$_5$", color="red", marker="+", markersize=5, linestyle="None"
-    ) 
-    (greek_line,) = ax.plot(
+        [], [], label="L$_5$", color="red", marker="+", markersize=10, linestyle="None"
+    )
+    (greeks_line,) = ax.plot(
         [],
         [],
         label="Greeks",
         color="green",
         marker="o",
-        markersize=5,
+        markersize=1,
         linestyle="None",
     )
-    (trojan_line,) = ax.plot(
+    (trojans_line,) = ax.plot(
         [],
         [],
         label="Trojans",
         color="magenta",
         marker="o",
-        markersize=5,
+        markersize=1,
         linestyle="None",
     )
 
@@ -67,26 +99,34 @@ def video_plot(end_time, fps, save_animation=False):
     ax.legend(loc="upper right", frameon=False, prop={"size": 10})
 
     def animate(i):
-        sun_position = r_sun(greek_sol.t[i])
+        sun_position = r_sun(ts[i])
         sun_line.set_data(sun_position[0], sun_position[1])
-        j_position = r_j(greek_sol.t[i])
+        j_position = r_j(ts[i])
         j_line.set_data(j_position[0], j_position[1])
-        
-        l4 = l_4(greek_sol.t[i])
+
+        l4 = l_4(ts[i])
         l4_line.set_data(l4[0], l4[1])
-        l5 = l_5(greek_sol.t[i])
+        l5 = l_5(ts[i])
         l5_line.set_data(l5[0], l5[1])
 
-        greek_line.set_data([greek_sol.y[0, i]], [greek_sol.y[1, i]])
-        trojan_line.set_data([trojan_sol.y[0, i]], [trojan_sol.y[1, i]])
+        greeks_line.set_data(greek_y0s[:, i], greek_y1s[:, i])
+        trojans_line.set_data(trojan_y0s[:, i], trojan_y1s[:, i])
 
-        time_text.set_text(str(np.round(greek_sol.t[i], 1)) + " years")
-        return (sun_line, j_line, l4_line, l5_line, greek_line, trojan_line, time_text)
+        time_text.set_text(str(np.round(ts[i], 1)) + " years")
+        return (
+            sun_line,
+            j_line,
+            l4_line,
+            l5_line,
+            greeks_line,
+            trojans_line,
+            time_text,
+        )
 
     anim = FuncAnimation(
         fig,
         animate,
-        frames=int(end_time * fps),  # supplies range(frames) to animate
+        frames=int(num_points),  # supplies range(frames) to animate
         interval=1 / fps,  # time between frames
         blit=True,
     )
@@ -96,15 +136,18 @@ def video_plot(end_time, fps, save_animation=False):
         writer = animation.FFMpegWriter(
             fps=fps, metadata=dict(artist="Adam Ormondroyd"),  # bitrate=1800
         )
-        print("writer gotten")
-        anim.save("movie.mp4", writer=writer)
+
+        anim.save(file_name + ".mp4", writer=writer)
         print("saved")
     plt.show()
 
 
-video_plot(end_time=10 * T, fps=30)
-
-fps = 30
-
-end_time = 100
-points_per_year = 30
+video_plot(
+    run_time=10 * T,
+    fps=30,
+    seconds_per_year=0.2,
+    num_greeks=100,
+    num_trojans=100,
+    position_spread=0.1,
+    save_animation=True,
+)
