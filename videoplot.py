@@ -30,9 +30,10 @@ def video_plot(
     greek_y1s = np.zeros((num_greeks, num_points))
 
     for i in range(num_greeks):
-        offset = (np.random.rand(3) - 0.5) * np.array(
-            [position_spread, position_spread, 0]
-        )  # no z offset
+        offset = (np.random.rand(3) - 0.5) * position_spread
+
+        offset = offset * np.array([1, 1, 0])  # no z offset
+
         r_0 = L4 + offset
         v_0 = omega_cross(r_0)
         sol = asteroid(run_time, ts, r_0, v_0)
@@ -43,9 +44,10 @@ def video_plot(
     trojan_y1s = np.zeros((num_trojans, num_points))
 
     for i in range(num_trojans):
-        offset = (np.random.rand(3) - 0.5) * np.array(
-            [position_spread, position_spread, 0]
-        )  # no z offset
+        offset = (np.random.rand(3) - 0.5) * position_spread
+
+        offset = offset * np.array([1, 1, 0])  # no z offset
+
         r_0 = L5 + offset
         v_0 = omega_cross(r_0)
         sol = asteroid(run_time, ts, r_0, v_0)

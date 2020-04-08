@@ -29,3 +29,10 @@ def asteroid(run_time, t_eval, r_0, v_0):
     y0 = np.array([R * np.cos(theta_0) - R_SUN, R * np.sin(theta_0), 0, 0, 0, 0,])
 
     return solve_ivp(derivs, (0, run_time), y0, t_eval=t_eval, method="LSODA")
+
+
+def max_wander(run_time, t_eval, r_0, v_0):
+    """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
+    sol = asteroid(run_time, r_0, v_0)
+    rs = sol.y[0:3]  # extract positions from solution
+    return np.max(np.linalg.norm(rs - r_0))
