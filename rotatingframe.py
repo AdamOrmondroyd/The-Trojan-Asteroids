@@ -23,9 +23,9 @@ def derivs(t, y):
     return np.hstack((y[3:6], acceleration(t, y[0:3], y[3:6])))
 
 
-def asteroid(run_time, t_eval):
+def asteroid(run_time, t_eval, r_0, v_0):
     """Trajectory of asteroid calculated using solve_ivp"""
-    theta0 = np.pi / 3
-    y0 = np.array([R * np.cos(theta0) - R_SUN, R * np.sin(theta0), 0, 0, 0, 0,])
+    theta_0 = np.pi / 3
+    y0 = np.array([R * np.cos(theta_0) - R_SUN, R * np.sin(theta_0), 0, 0, 0, 0,])
 
     return solve_ivp(derivs, (0, run_time), y0, t_eval=t_eval, method="LSODA")
