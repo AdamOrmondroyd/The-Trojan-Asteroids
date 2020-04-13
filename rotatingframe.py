@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from constants import M_SUN, M_J, R, R_SUN, R_J, W
+from constants import L4, M_SUN, M_J, R, R_SUN, R_J, W
 
 r_sun = np.array([-R_SUN, 0, 0])
 r_j = np.array([R_J, 0, 0])
@@ -26,13 +26,23 @@ def derivs(t, y):
 def asteroid(run_time, t_eval, r_0, v_0):
     """Trajectory of asteroid calculated using solve_ivp"""
     theta_0 = np.pi / 3
-    y0 = np.array([R * np.cos(theta_0) - R_SUN, R * np.sin(theta_0), 0, 0, 0, 0,])
+    y0 = np.append(r_0, v_0)
 
     return solve_ivp(derivs, (0, run_time), y0, t_eval=t_eval, method="LSODA")
 
 
-def max_wander(run_time, t_eval, r_0, v_0):
+def max_wander(run_time, t_eval, r_0, v_0, stability_point):
     """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
-    sol = asteroid(run_time, r_0, v_0)
+    sol = asteroid(run_time, t_eval, r_0, v_0)
     rs = sol.y[0:3]  # extract positions from solution
-    return np.max(np.linalg.norm(rs - r_0))
+    deltas = np.transpose(rs) - stability_point
+    norms = np.linalg.norm(deltas, axis=1)
+    # print(norms.size)
+    # plt.plot(sol.y[0], sol.y[1], "+", label="Greeks", color="green")
+    # plt.plot(L4[0], L4[1], "+", label="L$_4$", color="blue")
+    # plt.plot(r_0[0], r_0[1], "+", label="Starting point")
+    # plt.axis("scaled")
+    # plt.legend()
+    # plt.show()
+    # print(norms)
+    return np.max(norms)
