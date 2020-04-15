@@ -47,11 +47,3 @@ if __name__ == "__main__":
     cbar.set_label("Wander / AU")
     plt.savefig("position_wanders.png")
     plt.show()
-
-# if __name__ == "__main__":
-#     with concurrent.futures.ProcessPoolExecutor() as executor:
-#         wanders = executor.map(y, xs)
-#         np.save("wanders.npy", (wanders, spread, xs), allow_pickle=True)
-#         print("saved")
-#         toc = time.time()
-#         print("Time taken " + str(toc - tic) + "s")
