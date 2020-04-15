@@ -37,4 +37,4 @@ def max_wander(run_time, t_eval, r_0, v_0, stability_point):
     rs = np.transpose(sol.y[0:3])  # extract positions from solution
     deltas = rs - stability_point
     norms = np.linalg.norm(deltas, axis=1)
-    return np.max(norms)
+    return norms.max()
