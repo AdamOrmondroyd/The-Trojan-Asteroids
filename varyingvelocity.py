@@ -11,50 +11,50 @@ points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 
-def max_wander_wrapper(x_offset, y_offset):
+def max_wander_wrapper(vx_offset, vy_offset):
     return max_wander(
         end_time,
         ts,
-        r_0=L4 + np.array([x_offset, y_offset, 0]),
-        v_0=np.array([0, 0, 0]),
+        r_0=L4,
+        v_0=np.array([vx_offset, vy_offset, 0]),
         stability_point=L4,
     )
 
 
 spread = 0.04
 points = 32
-xs = np.linspace(-spread, spread, points)
+vs = np.linspace(-spread, spread, points)
 tic = time.time()
 
 if __name__ == "__main__":
     pool = multiprocessing.Pool()
     wanders = np.reshape(
-        pool.starmap(max_wander_wrapper, product(xs, xs)), (points, points), order="F"
+        pool.starmap(max_wander_wrapper, product(vs, vs)), (points, points), order="F"
     )
     pool.close()
-    np.save("wanders.npy", (wanders, spread, xs), allow_pickle=True)
+    np.save("wanders.npy", (wanders, spread, vs), allow_pickle=True)
     print("saved")
     toc = time.time()
     print("Time taken " + str(toc - tic) + "s")
 
-    wanders, spread, xs = np.load("wanders.npy", allow_pickle=True)
+    wanders, spread, vs = np.load("wanders.npy", allow_pickle=True)
 
     fig, axis = plt.subplots()
 
-    xx, yy = np.meshgrid(xs, xs)
+    xx, yy = np.meshgrid(vs, vs)
     contours = axis.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
 
-    axis.plot(0, 0, "+", label="L%_4$")
+    axis.plot(0, 0, "+", label="Origin")
 
-    jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
-    axis.add_artist(jupiter_circle)
+    # jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
+    # axis.add_artist(jupiter_circle)
 
     axis.set(
-        title="Wander as a function of initial position",
-        xlabel="x offset / AU",
-        ylabel="y_offset / AU",
+        title="Wander as a function of initial velocity",
+        xlabel="Initial v$_x$ / (AU/year)",
+        ylabel="Initial v$_y$ / (AU/year)",
     )
-    plt.savefig("position_wanders.png")
+    plt.savefig("velocity_wanders.png")
     plt.show()
