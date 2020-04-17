@@ -32,24 +32,19 @@ if __name__ == "__main__":
         pool.starmap(max_wander_wrapper, product(vs, vs)), (points, points), order="F"
     )
     pool.close()
-    np.save("wanders.npy", (wanders, spread, vs), allow_pickle=True)
-    print("saved")
+
     toc = time.time()
     print("Time taken " + str(toc - tic) + "s")
 
-    wanders, spread, vs = np.load("wanders.npy", allow_pickle=True)
+    xx, yy = np.meshgrid(vs, vs)
 
     fig, axis = plt.subplots()
 
-    xx, yy = np.meshgrid(vs, vs)
     contours = axis.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
 
     axis.plot(0, 0, "+", label="Origin")
-
-    # jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
-    # axis.add_artist(jupiter_circle)
 
     axis.set(
         title="Wander as a function of initial velocity",

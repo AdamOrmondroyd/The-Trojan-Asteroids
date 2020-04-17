@@ -24,6 +24,7 @@ def max_wander_wrapper(x_offset, y_offset):
 spread = 0.04
 points = 32
 xs = np.linspace(-spread, spread, points)
+
 tic = time.time()
 
 if __name__ == "__main__":
@@ -32,16 +33,14 @@ if __name__ == "__main__":
         pool.starmap(max_wander_wrapper, product(xs, xs)), (points, points), order="F"
     )
     pool.close()
-    np.save("wanders.npy", (wanders, spread, xs), allow_pickle=True)
-    print("saved")
+
     toc = time.time()
     print("Time taken " + str(toc - tic) + "s")
 
-    wanders, spread, xs = np.load("wanders.npy", allow_pickle=True)
+    xx, yy = np.meshgrid(xs, xs)
 
     fig, axis = plt.subplots()
 
-    xx, yy = np.meshgrid(xs, xs)
     contours = axis.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
