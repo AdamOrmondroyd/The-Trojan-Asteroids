@@ -21,7 +21,7 @@ def max_wander_wrapper(x_offset, y_offset):
     )
 
 
-spread = 0.04
+spread = 0.05
 points = 32
 xs = np.linspace(-spread, spread, points)
 
@@ -39,18 +39,22 @@ if __name__ == "__main__":
 
     xx, yy = np.meshgrid(xs, xs)
 
-    fig, axis = plt.subplots()
+    fig, ax = plt.subplots()
 
-    contours = axis.contourf(xx, yy, wanders, levels=100)
+    contours = ax.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
 
-    axis.plot(0, 0, "+", label="L%_4$")
+    ax.plot(0, 0, "+", label="L%_4$")
+
+    rs = np.outer(L4, xs) / np.linalg.norm(L4)
+    ax.plot(rs[0], rs[1], label="Positions for next part")
 
     jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
-    axis.add_artist(jupiter_circle)
+    ax.add_artist(jupiter_circle)
 
-    axis.set(
+    ax.set_aspect("equal", "box")
+    ax.set(
         title="Wander as a function of initial position",
         xlabel="x offset / AU",
         ylabel="y_offset / AU",

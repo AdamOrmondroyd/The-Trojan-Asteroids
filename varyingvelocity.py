@@ -38,15 +38,19 @@ if __name__ == "__main__":
 
     xx, yy = np.meshgrid(vs, vs)
 
-    fig, axis = plt.subplots()
+    fig, ax = plt.subplots()
 
-    contours = axis.contourf(xx, yy, wanders, levels=100)
+    contours = ax.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
 
-    axis.plot(0, 0, "+", label="Origin")
+    ax.plot(0, 0, "+", label="Origin")
 
-    axis.set(
+    jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
+    ax.add_artist(jupiter_circle)
+
+    ax.set_aspect("equal", "box")
+    ax.set(
         title="Wander as a function of initial velocity",
         xlabel="Initial v$_x$ / (AU/year)",
         ylabel="Initial v$_y$ / (AU/year)",
