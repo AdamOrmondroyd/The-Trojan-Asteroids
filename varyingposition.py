@@ -45,7 +45,7 @@ if __name__ == "__main__":
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
 
-    ax.plot(0, 0, "+", label="L%_4$")
+    ax.plot(0, 0, marker="+", label="L%_4$")
 
     rs = np.outer(L4, xs) / np.linalg.norm(L4)
     ax.plot(rs[0], rs[1], label="Positions for next part")

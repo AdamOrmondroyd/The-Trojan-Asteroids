@@ -44,7 +44,10 @@ if __name__ == "__main__":
     cbar = fig.colorbar(contours)
     cbar.set_label("Wander / AU")
 
-    ax.plot(0, 0, "+", label="Origin")
+    ax.plot(0, 0, label="Origin", marker="+")
+
+    v2s = np.outer(np.array([-L4[1], L4[0], 0]), vs) / np.linalg.norm(L4)
+    ax.plot(v2s[0], v2s[1], label="Positions for next part")
 
     jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
     ax.add_artist(jupiter_circle)
