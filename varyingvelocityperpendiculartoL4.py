@@ -5,6 +5,7 @@ from constants import L4, L5, R, R_SUN, R_J, T
 import time
 import multiprocessing
 from itertools import product
+from scipy.optimize import curve_fit
 
 end_time = 100 * T
 points_per_year = 100
@@ -23,7 +24,7 @@ def max_wander_wrapper(v_offset):
 
 spread = 0.06
 points = 100
-vs = np.linspace(-spread, spread, points)
+vs = np.linspace(0, spread, points)
 
 tic = time.time()
 
@@ -35,9 +36,20 @@ if __name__ == "__main__":
     toc = time.time()
     print("Time taken " + str(toc - tic) + "s")
 
+    def quadratic(x, a, b, c):
+        return a * x ** 2 + b * x + c
+
+    (a, b, c), pcov = curve_fit(quadratic, vs, wanders)
+
+    print("a: " + str(a))
+    print("b: " + str(b))
+    print("c: " + str(c))
+
     fig, ax = plt.subplots()
 
-    ax.plot(vs, wanders, label="wanders", marker="+")
+    ax.plot(vs, wanders, label="wanders", marker="+", linestyle="None")
+
+    ax.plot(vs, quadratic(vs, a, b, c), label="quadratic fit")
 
     ax.set(
         title="Wander due to velocity perturbation perpendicular to L$_4$",

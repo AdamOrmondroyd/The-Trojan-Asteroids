@@ -4,9 +4,9 @@ from numpy import pi
 import rotatingframe
 from scipy.optimize import curve_fit
 
-
+### Starts to die at around m=0.36
 m_min = 0.0
-m_max = 0.06
+m_max = 0.03
 points = 100
 ms = np.linspace(m_min, m_max, points)
 wanders = np.zeros(points)
@@ -50,8 +50,7 @@ def quadratic(x, a, b, c):
     return a * x ** 2 + b * x + c
 
 
-remove = 5
-(a, b, c), pcov = curve_fit(quadratic, ms[remove:], wanders[remove:])
+(a, b, c), pcov = curve_fit(quadratic, ms, wanders)
 
 print("a: " + str(a))
 print("b: " + str(b))
@@ -59,6 +58,7 @@ print("c: " + str(c))
 
 fig, ax = plt.subplots()
 
-ax.plot(ms[remove:], wanders[remove:], label="wanders", marker="+", linestyle="None")
-ax.plot(ms[remove:], quadratic(ms[remove:], a, b, c), label="Cubic fit")
+ax.plot(ms, wanders, label="wanders", marker="+", linestyle="None")
+ax.plot(ms, quadratic(ms, a, b, c), label="quadratic fit")
+plt.savefig("mass.png")
 plt.show()
