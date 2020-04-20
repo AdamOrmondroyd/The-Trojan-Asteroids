@@ -40,6 +40,14 @@ def l_5(t):
     )
 
 
+def specific_energy(r, v):
+    """Specific energy of an asteroid"""
+    return 0.5 * np.dot(v, v) - G * (
+        M_SUN / np.linalg.norm(np.subtract(r - R_SUN), axis=1)
+        + M_J / np.linalg.norm(np.subtract(r - R_J), axis=1)
+    )
+
+
 def acceleration(t, r):
     """Acceleration of an asteroid at position r and time t"""
     return -G * (

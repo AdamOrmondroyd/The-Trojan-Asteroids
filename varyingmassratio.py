@@ -5,8 +5,8 @@ import rotatingframe
 from scipy.optimize import curve_fit
 
 ### Starts to die at around m=0.36
-m_min = 0.0
-m_max = 0.03
+m_min = 0.001
+m_max = 0.025
 points = 100
 ms = np.linspace(m_min, m_max, points)
 wanders = np.zeros(points)
@@ -50,15 +50,31 @@ def quadratic(x, a, b, c):
     return a * x ** 2 + b * x + c
 
 
+def linear(x, a, b):
+    return a * x + b
+
+
 (a, b, c), pcov = curve_fit(quadratic, ms, wanders)
 
 print("a: " + str(a))
 print("b: " + str(b))
 print("c: " + str(c))
 
+(d, e), pcov2 = curve_fit(linear, ms, wanders)
+
+print("d: " + str(d))
+print("e: " + str(e))
+
 fig, ax = plt.subplots()
 
 ax.plot(ms, wanders, label="wanders", marker="+", linestyle="None")
 ax.plot(ms, quadratic(ms, a, b, c), label="quadratic fit")
+
+ax.set(
+    title="Varying the mass ratio",
+    xlabel="M$_J$/M$_{\mathrm{SUN}}$",
+    ylabel="Maximum wander / AU",
+)
+ax.legend()
 plt.savefig("mass.png")
 plt.show()
