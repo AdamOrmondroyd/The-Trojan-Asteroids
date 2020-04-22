@@ -14,7 +14,6 @@ ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 def max_wander_wrapper(z_offset):
     return max_wander(
-        end_time,
         ts,
         r_0=L4 + np.array([0, 0, z_offset]),
         v_0=np.array([0, 0, 0]),
@@ -55,7 +54,7 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots()
 
-    ax.plot(zs, wanders, marker="+", label="wanders")
+    ax.plot(zs, wanders, marker="+", label="wanders", linestyle="None")
 
     ax.plot(zs, quadratic(zs, a, b, c), label="quadratic fit")
 

@@ -14,7 +14,6 @@ ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 def max_wander_wrapper(r_offset):
     return max_wander(
-        end_time,
         ts,
         r_0=L4 * (1.0 + r_offset / np.linalg.norm(L4)),
         v_0=np.array([0, 0, 0]),
@@ -24,7 +23,7 @@ def max_wander_wrapper(r_offset):
 
 spread = 0.03
 points = 100
-rs = np.linspace(0, spread, points)
+rs = np.linspace(-spread, 0, points)
 
 tic = time.time()
 
@@ -55,9 +54,9 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots()
 
-    ax.plot(rs, wanders, marker="+", label="wanders")
+    ax.plot(rs, wanders, label="wanders", marker="+", linestyle="None")
 
-    # ax.plot(rs, quadratic(rs, a, b, c), label="quadratic fit")
+    ax.plot(rs, quadratic(rs, a, b, c), label="quadratic fit")
 
     ax.plot(rs, linear(rs, d, e), label="linear fit")
 

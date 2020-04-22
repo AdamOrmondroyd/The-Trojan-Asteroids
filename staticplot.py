@@ -7,7 +7,7 @@ end_time = 100
 points_per_year = 1000
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-sol = asteroid(run_time=end_time, t_eval=ts, r_0=L4, v_0=np.array([0, 0, 0]))
+sol = asteroid(t_eval=ts, r_0=L4, v_0=np.array([0, 0, 0]))
 
 plt.plot(
     -R_SUN, 0, label="sun", color="orange", marker="*", markersize=20, linestyle="None"

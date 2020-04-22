@@ -23,17 +23,16 @@ def derivs(t, y):
     return np.hstack((y[3:6], acceleration(t, y[0:3], y[3:6])))
 
 
-def asteroid(run_time, t_eval, r_0, v_0):
+def asteroid(t_eval, r_0, v_0):
     """Trajectory of asteroid calculated using solve_ivp"""
-    theta_0 = np.pi / 3
     y0 = np.append(r_0, v_0)
 
-    return solve_ivp(derivs, (0, run_time), y0, t_eval=t_eval, method="LSODA")
+    return solve_ivp(derivs, (0, t_eval[-1]), y0, t_eval=t_eval, method="LSODA")
 
 
-def max_wander(run_time, t_eval, r_0, v_0, stability_point):
+def max_wander(t_eval, r_0, v_0, stability_point):
     """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
-    sol = asteroid(run_time, t_eval, r_0, v_0)
+    sol = asteroid(t_eval, r_0, v_0)
     rs = np.transpose(sol.y[0:3])  # extract positions from solution
     deltas = rs - stability_point
     norms = np.linalg.norm(deltas, axis=1)

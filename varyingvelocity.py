@@ -13,11 +13,7 @@ ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 def max_wander_wrapper(vx_offset, vy_offset):
     return max_wander(
-        end_time,
-        ts,
-        r_0=L4,
-        v_0=np.array([vx_offset, vy_offset, 0]),
-        stability_point=L4,
+        ts, r_0=L4, v_0=np.array([vx_offset, vy_offset, 0]), stability_point=L4,
     )
 
 

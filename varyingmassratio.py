@@ -37,11 +37,7 @@ for i in range(points):
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
     wanders[i] = max_wander(
-        end_time,
-        ts,
-        r_0=constants.L4,
-        v_0=np.array([0, 0, 0]),
-        stability_point=constants.L4,
+        ts, r_0=constants.L4, v_0=np.array([0, 0, 0]), stability_point=constants.L4,
     )
 
 

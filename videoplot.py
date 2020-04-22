@@ -31,7 +31,7 @@ def video_plot(
 
         r_0 = L4 + offset
         v_0 = omega_cross(r_0)
-        sol = asteroid(run_time, ts, r_0, v_0)
+        sol = asteroid(ts, r_0, v_0)
         greek_y0s[i] = sol.y[0]
         greek_y1s[i] = sol.y[1]
 
@@ -45,7 +45,7 @@ def video_plot(
 
         r_0 = L5 + offset
         v_0 = omega_cross(r_0)
-        sol = asteroid(run_time, ts, r_0, v_0)
+        sol = asteroid(ts, r_0, v_0)
         trojan_y0s[i] = sol.y[0]
         trojan_y1s[i] = sol.y[1]
 
