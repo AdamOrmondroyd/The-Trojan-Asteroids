@@ -4,7 +4,6 @@ from rotatingframe import max_wander
 from constants import L4, L5, R, R_SUN, R_J, T
 import time
 import multiprocessing
-from itertools import product
 from scipy.optimize import curve_fit
 
 end_time = 100 * T
