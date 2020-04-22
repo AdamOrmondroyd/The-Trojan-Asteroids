@@ -37,15 +37,12 @@ def random_asteroid_wrapper(greek):
     r_offset = (np.random.rand(3) - 0.5) * position_spread
     v_offset = (np.random.rand(3) - 0.5) * velocity_spread
 
-    r_offset = r_offset * np.array([1, 1, 0])  # no z offset
-    v_offset = v_offset * np.array([1, 1, 0])  # no z offset
-
     if greek:
         r_0 = L4 + r_offset
     else:
         r_0 = L5 + r_offset
 
-    v_0 = omega_cross(r_0)  # + v_offset
+    v_0 = omega_cross(r_0) + v_offset
 
     return asteroid(ts, r_0, v_0)
 
