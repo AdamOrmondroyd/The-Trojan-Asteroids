@@ -4,50 +4,69 @@ from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 from stationaryframe import asteroid, r_sun, r_j, l_4, l_5, omega_cross
 from constants import L4, L5, R, R_SUN, R_J, T, W
+import multiprocessing
+
+run_time = 10 * T
+fps = 30
+seconds_per_year = 0.2
+num_greeks = 100
+num_trojans = 100
+position_spread = 0.1
+velocity_spread = 0.1
+save_animation = True
+file_name = "movie.mp4"
+
+num_points = int(run_time * fps * seconds_per_year)
+ts = np.linspace(0, run_time, num_points)
+
+greek_xs = np.zeros((num_greeks, num_points))
+greek_ys = np.zeros((num_greeks, num_points))
+greek_zs = np.zeros((num_greeks, num_points))
+
+greek_input = np.full(num_greeks, True, dtype=bool)
+
+trojan_xs = np.zeros((num_trojans, num_points))
+trojan_ys = np.zeros((num_trojans, num_points))
+trojan_zs = np.zeros((num_trojans, num_points))
+
+trojan_input = np.full(num_trojans, False, dtype=bool)
 
 
-def video_plot(
-    run_time,
-    fps,
-    seconds_per_year,
-    num_greeks,
-    num_trojans,
-    position_spread,
-    save_animation=False,
-    file_name="movie",
-):
-    """Makes an animation in the stationary frame of a random selection about the Lagrangian points"""
+def random_asteroid_wrapper(greek):
+    """Wrapper returning the solution of an asteroid perturbed about starting_point"""
+    r_offset = (np.random.rand(3) - 0.5) * position_spread
+    v_offset = (np.random.rand(3) - 0.5) * velocity_spread
 
-    num_points = int(run_time * fps * seconds_per_year)
-    ts = np.linspace(0, run_time, num_points)
+    r_offset = r_offset * np.array([1, 1, 0])  # no z offset
+    v_offset = v_offset * np.array([1, 1, 0])  # no z offset
 
-    greek_y0s = np.zeros((num_greeks, num_points))
-    greek_y1s = np.zeros((num_greeks, num_points))
+    if greek:
+        r_0 = L4 + r_offset
+    else:
+        r_0 = L5 + r_offset
+
+    v_0 = omega_cross(r_0)  # + v_offset
+
+    return asteroid(ts, r_0, v_0)
+
+
+if __name__ == "__main__":
+    pool = multiprocessing.Pool()
+
+    greek_sols = pool.map(random_asteroid_wrapper, greek_input)
+
+    trojan_sols = pool.map(random_asteroid_wrapper, trojan_input)
+    pool.close()
 
     for i in range(num_greeks):
-        offset = (np.random.rand(3) - 0.5) * position_spread
-
-        offset = offset * np.array([1, 1, 0])  # no z offset
-
-        r_0 = L4 + offset
-        v_0 = omega_cross(r_0)
-        sol = asteroid(ts, r_0, v_0)
-        greek_y0s[i] = sol.y[0]
-        greek_y1s[i] = sol.y[1]
-
-    trojan_y0s = np.zeros((num_trojans, num_points))
-    trojan_y1s = np.zeros((num_trojans, num_points))
+        greek_xs[i] = greek_sols[i].y[0]
+        greek_ys[i] = greek_sols[i].y[1]
+        greek_zs[i] = greek_sols[i].y[2]
 
     for i in range(num_trojans):
-        offset = (np.random.rand(3) - 0.5) * position_spread
-
-        offset = offset * np.array([1, 1, 0])  # no z offset
-
-        r_0 = L5 + offset
-        v_0 = omega_cross(r_0)
-        sol = asteroid(ts, r_0, v_0)
-        trojan_y0s[i] = sol.y[0]
-        trojan_y1s[i] = sol.y[1]
+        trojan_xs[i] = trojan_sols[i].y[0]
+        trojan_ys[i] = trojan_sols[i].y[1]
+        trojan_zs[i] = trojan_sols[i].y[2]
 
     fig = plt.figure(figsize=(7, 7))
     ax = plt.axes(xlim=(-6, 6), ylim=(-6, 6), aspect="equal")
@@ -106,8 +125,8 @@ def video_plot(
         l5 = l_5(ts[i])
         l5_line.set_data(l5[0], l5[1])
 
-        greeks_line.set_data(greek_y0s[:, i], greek_y1s[:, i])
-        trojans_line.set_data(trojan_y0s[:, i], trojan_y1s[:, i])
+        greeks_line.set_data(greek_xs[:, i], greek_ys[:, i])
+        trojans_line.set_data(trojan_xs[:, i], trojan_ys[:, i])
 
         time_text.set_text(str(np.round(ts[i], 1)) + " years")
         return (
@@ -134,17 +153,6 @@ def video_plot(
             fps=fps, metadata=dict(artist="Adam Ormondroyd"),  # bitrate=1800
         )
 
-        anim.save(file_name + ".mp4", writer=writer)
+        anim.save(file_name, writer=writer)
         print("saved")
     plt.show()
-
-
-video_plot(
-    run_time=10 * T,
-    fps=30,
-    seconds_per_year=0.2,
-    num_greeks=100,
-    num_trojans=100,
-    position_spread=0.1,
-    save_animation=True,
-)
