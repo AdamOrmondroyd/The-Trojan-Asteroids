@@ -2,13 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
-from stationaryframe import asteroid, r_sun, r_j, l_4, l_5
+from stationaryframe import asteroid, r_sun, r_j, l_4, l_5, omega_cross
 from constants import L4, L5, R, R_SUN, R_J, T, W
-
-
-def omega_cross(r):
-    """Returns the result of W x r"""
-    return np.array([-W * r[1], W * r[0], 0])
 
 
 def video_plot(
