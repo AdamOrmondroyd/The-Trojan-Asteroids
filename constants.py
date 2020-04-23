@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import pi
 
+G = 4 * pi**2
 M_SUN = 1
 M_J = 0.001
 R = 5.2

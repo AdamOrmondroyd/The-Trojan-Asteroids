@@ -1,11 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from constants import M_SUN, M_J, R, R_SUN, R_J, W
+from constants import G, M_SUN, M_J, R, R_SUN, R_J, W
 
 r_sun = np.array([-R_SUN, 0, 0])
 r_j = np.array([R_J, 0, 0])
-G = 4 * np.pi ** 2
 
 
 def acceleration(t, r, v):
@@ -33,7 +32,7 @@ def asteroid(t_eval, r_0, v_0):
 def max_wander(t_eval, r_0, v_0, stability_point):
     """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
     sol = asteroid(t_eval, r_0, v_0)
-    rs = np.transpose(sol.y[0:3])  # extract positions from solution
-    deltas = rs - stability_point
+    rs = sol.y[0:3]  # extract positions from solution
+    deltas = (rs.T - stability_point).T
     norms = np.linalg.norm(deltas, axis=1)
     return norms.max()

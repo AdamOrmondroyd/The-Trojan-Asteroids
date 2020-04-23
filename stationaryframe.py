@@ -1,11 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from constants import L4, L5, M_SUN, M_J, R, W
-
-R_SUN = R * M_J / (M_J + M_SUN)
-R_J = R * M_SUN / (M_J + M_SUN)
-G = 4 * np.pi ** 2
+from constants import G, L4, L5, M_SUN, M_J, R, R_SUN, R_J, W
 
 
 def r_sun(t):
