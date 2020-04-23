@@ -1,18 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import max_wander
-from constants import L4, L5, R, R_SUN, R_J, T
+from rotatingframe import asteroid
 import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
-end_time = 100 * T
+ast = asteroid()
+
+end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 
 def max_wander_wrapper(v_offset):
-    return max_wander(ts, r_0=L4, v_0=np.array([0, 0, v_offset]), stability_point=L4,)
+    return ast.max_wander(ts, r_0=ast.L4, v_0=np.array([0, 0, v_offset]), stability_point=ast.L4,)
 
 
 spread = 0.6
