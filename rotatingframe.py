@@ -34,5 +34,5 @@ def max_wander(t_eval, r_0, v_0, stability_point):
     sol = asteroid(t_eval, r_0, v_0)
     rs = sol.y[0:3]  # extract positions from solution
     deltas = (rs.T - stability_point).T  # Transpose used to stick to array convention
-    norms = np.linalg.norm(deltas, axis=1)
+    norms = np.linalg.norm(deltas, axis=0)
     return norms.max()
