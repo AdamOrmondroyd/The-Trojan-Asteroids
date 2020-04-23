@@ -11,7 +11,6 @@ m_min = 0.001
 m_max = 0.025
 points = 100
 ms = np.linspace(m_min, m_max, points)
-wanders = np.zeros(points)
 
 
 def max_wander_wrapper(m):
