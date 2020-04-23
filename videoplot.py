@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     time_text = ax.text(0.02, 0.95, "", transform=ax.transAxes)
 
-    ax.set(title="Stationary frame", xlabel="x/AU", ylabel="y/AU")
+    ax.set(title="Stationary frame", xlabel="x/au", ylabel="y/au")
 
     ax.legend(loc="upper right", frameon=False, prop={"size": 10})
 

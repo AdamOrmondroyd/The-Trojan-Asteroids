@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     contours = ax.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
-    cbar.set_label("Wander / AU")
+    cbar.set_label("Wander / au")
 
     ax.plot(0, 0, marker="+", label="L%_4$")
 
@@ -55,8 +55,8 @@ if __name__ == "__main__":
     ax.set_aspect("equal", "box")
     ax.set(
         title="Wander as a function of initial position",
-        xlabel="x offset / AU",
-        ylabel="y_offset / AU",
+        xlabel="x offset / au",
+        ylabel="y_offset / au",
     )
     plt.savefig("position_wanders.png")
     plt.show()

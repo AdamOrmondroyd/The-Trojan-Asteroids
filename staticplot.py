@@ -16,6 +16,8 @@ plt.plot(
     R_J, 0, label="Jupiter", color="red", marker="o", markersize=10, linestyle="None"
 )
 plt.plot(sol.y[0], sol.y[1], "-", label="Greeks", color="green")
+plt.xlabel("x/au")
+plt.ylabel("y/au")
 plt.axis("scaled")
 plt.legend()
 plt.show()

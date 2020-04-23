@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     contours = ax.contourf(xx, yy, wanders, levels=100)
     cbar = fig.colorbar(contours)
-    cbar.set_label("Wander / AU")
+    cbar.set_label("Wander / au")
 
     ax.plot(0, 0, label="Origin", marker="+")
 
@@ -51,8 +51,8 @@ if __name__ == "__main__":
     ax.set_aspect("equal", "box")
     ax.set(
         title="Wander as a function of initial velocity",
-        xlabel="Initial v$_x$ / (AU/year)",
-        ylabel="Initial v$_y$ / (AU/year)",
+        xlabel="Initial v$_x$ / (au/year)",
+        ylabel="Initial v$_y$ / (au/year)",
     )
     plt.savefig("velocity_wanders.png")
     plt.show()

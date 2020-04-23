@@ -51,8 +51,8 @@ if __name__ == "__main__":
 
     ax.set(
         title="Wander due to velocity perturbation perpendicular to L$_4$",
-        xlabel="Velocity perpendicular to L$_4$ / (AU/year)",
-        ylabel="Maximum wander / AU",
+        xlabel="Velocity perpendicular to L$_4$ / (au/year)",
+        ylabel="Maximum wander / au",
     )
     ax.legend()
     plt.savefig("velocity_wanders_perpendicular_L4.png")

@@ -13,13 +13,13 @@ sol = asteroid(t_eval=ts, r_0=L4, v_0=omega_cross(L4))
 
 energies = specific_energy(ts, sol.y[0:3], sol.y[3:6])
 
-print("Mean specific energy: " + str(np.mean(energies)) + "(AU/year)²")
-print("Range: " + str(np.ptp(energies)) + "(AU/year)²")
+print("Mean specific energy: " + str(np.mean(energies)) + "(au/year)²")
+print("Range: " + str(np.ptp(energies)) + "(au/year)²")
 print("Range/mean: " + str(np.abs(np.ptp(energies) / np.mean(energies))))
 
 plt.plot(ts, energies, label="energy", marker="+", linestyle="None")
 plt.xlabel("time/years")
-plt.ylabel("energy/(AU/year)²")
+plt.ylabel("energy/(au/year)²")
 
 plt.legend()
 plt.show()

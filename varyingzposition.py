@@ -61,8 +61,8 @@ if __name__ == "__main__":
 
     ax.set(
         title="Wander due to position purturbation along z",
-        xlabel="z offset / AU",
-        ylabel="Maximum wander / AU",
+        xlabel="z offset / au",
+        ylabel="Maximum wander / au",
     )
     ax.legend()
     plt.savefig("position_wanders_z.png")
