@@ -33,6 +33,6 @@ def max_wander(t_eval, r_0, v_0, stability_point):
     """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
     sol = asteroid(t_eval, r_0, v_0)
     rs = sol.y[0:3]  # extract positions from solution
-    deltas = (rs.T - stability_point).T
+    deltas = (rs.T - stability_point).T  # Transpose used to stick to array convention
     norms = np.linalg.norm(deltas, axis=1)
     return norms.max()
