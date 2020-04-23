@@ -1,19 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import max_wander
-from constants import L4, L5, R, R_SUN, R_J, T
+from rotatingframe import asteroid
 import time
 import multiprocessing
 from itertools import product
 
-end_time = 100 * T
+ast = asteroid()
+
+end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 
 def max_wander_wrapper(vx_offset, vy_offset):
-    return max_wander(
-        ts, r_0=L4, v_0=np.array([vx_offset, vy_offset, 0]), stability_point=L4,
+    return ast.max_wander(
+        ts, r_0=ast.L4, v_0=np.array([vx_offset, vy_offset, 0]), stability_point=ast.L4,
     )
 
 
@@ -42,10 +43,12 @@ if __name__ == "__main__":
 
     ax.plot(0, 0, label="Origin", marker="+")
 
-    v2s = np.outer(np.array([-L4[1], L4[0], 0]), vs) / np.linalg.norm(L4)
+    v2s = np.outer(np.array([-ast.L4[1], ast.L4[0], 0]), vs) / np.linalg.norm(ast.L4)
     ax.plot(v2s[0], v2s[1], label="Positions for next part")
 
-    jupiter_circle = plt.Circle((-L4[0], -L4[1]), R_J, color="r", fill=False)
+    jupiter_circle = plt.Circle(
+        (-ast.L4[0], -ast.L4[1]), ast.R_J, color="r", fill=False
+    )
     ax.add_artist(jupiter_circle)
 
     ax.set_aspect("equal", "box")
