@@ -11,7 +11,7 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 0.04
+spread = 0.05
 points = 32
 vs = np.linspace(-spread, spread, points)
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
 
     contours = ax.contourf(xx, yy, wanders, levels=100, cmap="viridis_r")
-    cbar = fig.colorbar(contours)
+    cbar = fig.colorbar(contours, ticks=np.linspace(0, 11, 12))
     cbar.set_label("wander / au")
 
     ax.plot(0, 0, label="origin", marker="+")

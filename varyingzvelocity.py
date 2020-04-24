@@ -11,7 +11,7 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 0.6
+spread = 0.5
 points = 100
 vs = np.linspace(0, spread, points)
 

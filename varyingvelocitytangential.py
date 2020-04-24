@@ -11,9 +11,9 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 0.06
+spread = 0.05
 points = 100
-vs = np.linspace(0, spread, points)
+vs = np.linspace(-spread, spread, points)
 
 
 def max_wander_wrapper(v_offset):
@@ -38,17 +38,39 @@ if __name__ == "__main__":
     def quadratic(x, a, b, c):
         return a * x ** 2 + b * x + c
 
-    (a, b, c), pcov = curve_fit(quadratic, vs, wanders)
+    (a1, b1, c1), pcov1 = curve_fit(
+        quadratic, vs[points // 2 :], wanders[points // 2 :]
+    )
 
-    print("a: " + str(a))
-    print("b: " + str(b))
-    print("c: " + str(c))
+    positive_equation_string = "{:.1f}x$^2$ {:+.1f}x {:+.3e}".format(a1, b1, c1)
+
+    (a2, b2, c2), pcov2 = curve_fit(
+        quadratic, vs[: points // 2], wanders[: points // 2]
+    )
+
+    negative_equation_string = "{:.1f}x$^2$ {:+.1f}x {:+.3e}".format(a2, b2, c2)
 
     fig, ax = plt.subplots()
 
-    ax.plot(vs, wanders, label="wanders", marker="+", linestyle="None")
+    ax.plot(vs, wanders, label="wanders", marker="+", color="c", linestyle="None")
 
-    ax.plot(vs, quadratic(vs, a, b, c), label="quadratic fit")
+    ax.plot(
+        vs[points // 2 :],
+        quadratic(vs[points // 2 :], a1, b1, c1),
+        label=positive_equation_string,
+        color="black",
+        linestyle="--",
+        linewidth=1,
+    )
+
+    ax.plot(
+        vs[: points // 2],
+        quadratic(vs[: points // 2], a2, b2, c2),
+        label=negative_equation_string,
+        color="blue",
+        linestyle="--",
+        linewidth=1,
+    )
 
     ax.set(
         title="Wander due to velocity perturbation perpendicular to L$_4$",
