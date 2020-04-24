@@ -11,6 +11,10 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
+spread = 0.06
+points = 100
+vs = np.linspace(0, spread, points)
+
 
 def max_wander_wrapper(v_offset):
     return ast.max_wander(
@@ -21,19 +25,15 @@ def max_wander_wrapper(v_offset):
     )
 
 
-spread = 0.06
-points = 100
-vs = np.linspace(0, spread, points)
-
-tic = time.time()
-
 if __name__ == "__main__":
+    tic = time.time()
+
     pool = multiprocessing.Pool()
     wanders = pool.map(max_wander_wrapper, vs)
     pool.close()
 
     toc = time.time()
-    print("Time taken " + str(toc - tic) + "s")
+    print("Time taken: {:.1f} s".format(toc - tic))
 
     def quadratic(x, a, b, c):
         return a * x ** 2 + b * x + c
@@ -56,5 +56,8 @@ if __name__ == "__main__":
         ylabel="Maximum wander / au",
     )
     ax.legend()
-    plt.savefig("velocity_wanders_perpendicular_L4.png")
+
+    filename = "plots\\velocity_wanders_perpendicular_L4"
+    plt.savefig(filename + ".png")
+    plt.savefig(filename + ".eps")
     plt.show()

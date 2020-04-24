@@ -15,7 +15,7 @@ num_trojans = 100
 position_spread = 0.1
 velocity_spread = 0.1
 save_animation = True
-file_name = "movie.mp4"
+file_name = "outputs\\movie.mp4"
 
 num_points = int(run_time * fps * seconds_per_year)
 ts = np.linspace(0, run_time, num_points)

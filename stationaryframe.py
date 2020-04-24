@@ -110,9 +110,14 @@ class asteroid:
         """derivatives of asteroid for solver"""
         return np.hstack((y[3:6], self._acceleration(t, y[0:3])))
 
-    def trajectory(self, t_eval, r_0, v_0):
+    def trajectory(self, t_eval, r_0, v_0, events=None):
         """Trajectory of asteroid calculated using solve_ivp"""
         y0 = np.append(r_0, v_0)
         return solve_ivp(
-            self._derivs, (0, t_eval[-1]), y0, t_eval=t_eval, method="Radau"
+            self._derivs,
+            (0, t_eval[-1]),
+            y0,
+            t_eval=t_eval,
+            method="Radau",
+            events=events,
         )

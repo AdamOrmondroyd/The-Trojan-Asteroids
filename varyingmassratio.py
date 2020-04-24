@@ -14,8 +14,8 @@ ms = np.linspace(m_min, m_max, points)
 
 
 def max_wander_wrapper(m):
-    ast = asteroid(M_J=m)
-    print(ast.M_J)
+    ast = asteroid(M_P=m)
+    print(ast.M_P)
     end_time = 100 * ast.T
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -28,6 +28,8 @@ def max_wander_wrapper(m):
 
 
 if __name__ == "__main__":
+    tic = time.time()
+
     pool = multiprocessing.Pool()
     wanders = pool.map(max_wander_wrapper, ms)
     pool.close()
@@ -35,6 +37,9 @@ if __name__ == "__main__":
     # wanders = np.zeros(points)
     # for i in range(points):
     #     wanders[i] = max_wander_wrapper(ms[i])
+
+    toc = time.time()
+    print("Time taken: {:.1f} s".format(toc - tic))
 
     def quadratic(x, a, b, c):
         """Quadratic for curve fit"""
@@ -65,5 +70,8 @@ if __name__ == "__main__":
         ylabel="Maximum wander / au",
     )
     ax.legend()
-    plt.savefig("mass_wanders.png")
+
+    filename = "plots\\mass_wanders"
+    plt.savefig(filename + ".png")
+    plt.savefig(filename + ".eps")
     plt.show()

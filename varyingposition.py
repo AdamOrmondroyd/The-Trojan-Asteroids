@@ -25,9 +25,9 @@ def max_wander_wrapper(x_offset, y_offset):
     )
 
 
-tic = time.time()
-
 if __name__ == "__main__":
+    tic = time.time()
+
     pool = multiprocessing.Pool()
     wanders = np.reshape(
         pool.starmap(max_wander_wrapper, product(xs, xs)), (points, points), order="F"
@@ -35,29 +35,41 @@ if __name__ == "__main__":
     pool.close()
 
     toc = time.time()
-    print("Time taken " + str(toc - tic) + "s")
+    print("Time taken: {:.1f} s".format(toc - tic))
 
     xx, yy = np.meshgrid(xs, xs)
 
     fig, ax = plt.subplots()
 
-    contours = ax.contourf(xx, yy, wanders, levels=100)
-    cbar = fig.colorbar(contours)
-    cbar.set_label("Wander / au")
+    contours = ax.contourf(xx, yy, wanders, levels=100, cmap="viridis_r")
+    cbar = fig.colorbar(contours, ticks=np.linspace(0, 11, 12))
+    cbar.set_label("wander / au")
 
-    ax.plot(0, 0, marker="+", label="L%_4$")
+    ax.plot(0, 0, label="L$_4$", marker="+", color="blue", linestyle="None")
 
     rs = np.outer(ast.L4, xs) / np.linalg.norm(ast.L4)
-    ax.plot(rs[0], rs[1], label="Positions for next part")
+    ax.plot(rs[0], rs[1], label="positions to sample", color="k", linewidth=0.5)
 
-    planet_circle = plt.Circle((-ast.L4[0], -ast.L4[1]), ast.R_P, color="r", fill=False)
-    ax.add_artist(planet_circle)
+    thetas = np.linspace(0, np.pi / 2, 1000)
+    ax.plot(
+        ast.R_P * np.cos(thetas) - ast.L4[0],
+        ast.R_P * np.sin(thetas) - ast.L4[1],
+        label="planet orbit circle",
+        color="r",
+        linewidth=0.5,
+    )
 
     ax.set_aspect("equal", "box")
     ax.set(
         title="Wander as a function of initial position",
         xlabel="x offset / au",
-        ylabel="y_offset / au",
+        ylabel="y offset / au",
+        xlim=[-spread, spread],
+        ylim=[-spread, spread],
     )
-    plt.savefig("position_wanders.png")
+    ax.legend()
+
+    filename = "plots\\position_wanders"
+    plt.savefig(filename + ".png")
+    plt.savefig(filename + ".eps")
     plt.show()

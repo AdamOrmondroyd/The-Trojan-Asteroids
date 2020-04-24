@@ -11,6 +11,10 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
+spread = 1.5
+points = 100
+zs = np.linspace(0.1, spread, points)
+
 
 def max_wander_wrapper(z_offset):
     return ast.max_wander(
@@ -21,19 +25,15 @@ def max_wander_wrapper(z_offset):
     )
 
 
-spread = 1.0
-points = 100
-zs = np.linspace(0, spread, points)
-
-tic = time.time()
-
 if __name__ == "__main__":
+    tic = time.time()
+
     pool = multiprocessing.Pool()
     wanders = pool.map(max_wander_wrapper, zs)
     pool.close()
 
     toc = time.time()
-    print("Time taken " + str(toc - tic) + "s")
+    print("Time taken: {:.1f} s".format(toc - tic))
 
     def quadratic(x, a, b, c):
         return a * x ** 2 + b * x + c
@@ -43,22 +43,15 @@ if __name__ == "__main__":
 
     (a, b, c), pcov = curve_fit(quadratic, zs, wanders)
 
-    print("a: " + str(a))
-    print("b: " + str(b))
-    print("c: " + str(c))
-
-    (d, e), pcov2 = curve_fit(linear, zs, wanders)
-
-    print("d: " + str(d))
-    print("e: " + str(e))
+    equation_string = "{:.2f}x$^2$ {:+.3e}x {:+.3e}".format(a, b, c)
 
     fig, ax = plt.subplots()
 
-    ax.plot(zs, wanders, marker="+", label="wanders", linestyle="None")
+    ax.plot(zs, wanders, marker="+", label="wanders", linestyle="None", color="c")
 
-    ax.plot(zs, quadratic(zs, a, b, c), label="quadratic fit")
-
-    ax.plot(zs, linear(zs, d, e), label="linear fit")
+    ax.plot(
+        zs, quadratic(zs, a, b, c), label=equation_string, linestyle="--", color="k"
+    )
 
     ax.set(
         title="Wander due to position purturbation along z",
@@ -66,5 +59,14 @@ if __name__ == "__main__":
         ylabel="Maximum wander / au",
     )
     ax.legend()
-    plt.savefig("position_wanders_z.png")
+
+    filename = "plots\\position_wanders_z"
+    plt.savefig(filename + ".png")
+    plt.savefig(filename + ".eps")
+    plt.show()
+
+    (d, e), pcov = curve_fit(linear, zs, wanders)
+
+    plt.plot(np.log(zs), np.log(wanders))
+    plt.plot(np.log(zs,))
     plt.show()

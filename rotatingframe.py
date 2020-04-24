@@ -5,16 +5,16 @@ from constants import G, M_JUPITER, M_SUN, R_0
 
 
 class asteroid:
-    def __init__(self, M_R=M_JUPITER, R=5.2):
-        self._M_R = M_R
+    def __init__(self, M_P=M_JUPITER, R=5.2):
+        self._M_P = M_P
         self._R = R
 
-        self._R_SUN = R * self._M_R / (self._M_R + M_SUN)
-        self._R_P = R * M_SUN / (self._M_R + M_SUN)
+        self._R_SUN = R * self._M_P / (self._M_P + M_SUN)
+        self._R_P = R * M_SUN / (self._M_P + M_SUN)
         self._r_sun = np.array([-self._R_SUN, 0, 0])
         self._r_p = np.array([self._R_P, 0, 0])
 
-        self._W = np.sqrt(G * (self._M_R + M_SUN) / R ** 3)
+        self._W = np.sqrt(G * (self._M_P + M_SUN) / R ** 3)
         self._T = 2 * np.pi / self._W
 
         self._L4 = np.array([self._R / 2 - self._R_SUN, self._R * np.sqrt(3) / 2, 0])
@@ -31,9 +31,9 @@ class asteroid:
         return self._L5
 
     @property
-    def M_R(self):
+    def M_P(self):
         """Get mass of Jupiter"""
-        return self._M_R
+        return self._M_P
 
     @property
     def R(self):
@@ -64,21 +64,26 @@ class asteroid:
         """Acceleration of an asteroid at position r with velocity v at time t"""
         return -G * (
             M_SUN * (r - self._r_sun) / np.linalg.norm(r - self._r_sun) ** 3
-            + self._M_R * (r - self._r_p) / np.linalg.norm(r - self._r_p) ** 3
+            + self._M_P * (r - self._r_p) / np.linalg.norm(r - self._r_p) ** 3
         ) + self._W * np.array(
             [2 * v[1] + self._W * r[0], -2 * v[0] + self._W * r[1], 0]
-        )  # added coriolis and centrifugal forces
+        )  # explicit form for virtual acceleration with rotation in the z direction
 
     def _derivs(self, t, y):
         """derivatives for solver"""
         return np.hstack((y[3:6], self._acceleration(t, y[0:3], y[3:6])))
 
-    def trajectory(self, t_eval, r_0, v_0):
+    def trajectory(self, t_eval, r_0, v_0, events=None):
         """Trajectory of asteroid calculated using solve_ivp"""
         y0 = np.append(r_0, v_0)
 
         return solve_ivp(
-            self._derivs, (0, t_eval[-1]), y0, t_eval=t_eval, method="LSODA"
+            self._derivs,
+            (0, t_eval[-1]),
+            y0,
+            t_eval=t_eval,
+            method="LSODA",
+            events=events,
         )
 
     def max_wander(self, t_eval, r_0, v_0, stability_point):
