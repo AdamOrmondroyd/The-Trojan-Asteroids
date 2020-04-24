@@ -16,6 +16,7 @@ wanders = np.zeros(points)
 
 def max_wander_wrapper(m):
     ast = asteroid(M_J=m)
+    print(ast.M_J)
     end_time = 100 * ast.T
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -25,12 +26,20 @@ def max_wander_wrapper(m):
 
 
 if __name__ == "__main__":
-    # wanders = np.zeros(points)
-    # for i in range(points):
-    #     wanders[i] = max_wander_wrapper(ms[i])
-    pool = multiprocessing.Pool(processes=1)
-    wanders = pool.map(max_wander_wrapper, ms)
-    pool.close()
+    wanders = np.zeros(points)
+    for i in range(points):
+        # wanders[i] = max_wander_wrapper(ms[i])
+        ast = asteroid(M_J=ms[i])
+        print(ast.M_J)
+        end_time = 100
+        points_per_year = 100
+        ts = np.linspace(0, end_time, int(end_time * points_per_year))
+        wanders[i] = ast.max_wander(
+            ts, r_0=ast.L4, v_0=np.array([0, 0, 0]), stability_point=ast.L4,
+        )
+    # pool = multiprocessing.Pool(processes=1)
+    # wanders = pool.map(max_wander_wrapper, ms)
+    # pool.close()
 
     def quadratic(x, a, b, c):
         """Quadratic for curve fit"""
@@ -57,7 +66,7 @@ if __name__ == "__main__":
 
     ax.set(
         title="Varying the mass ratio",
-        xlabel="M$_J$/M$_{\mathrm{SUN}}$",
+        xlabel="M$_\textJ$/M$_{\odot}}$",
         ylabel="Maximum wander / au",
     )
     ax.legend()

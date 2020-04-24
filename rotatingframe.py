@@ -21,6 +21,11 @@ class asteroid:
         self._L5 = np.array([self._R / 2 - self._R_SUN, -self._R * np.sqrt(3) / 2, 0])
 
     @property
+    def M_J(self):
+        """Get mass of Jupiter"""
+        return self._M_J
+
+    @property
     def R(self):
         """Get distance between Sun and Jupiter"""
         return self._R
