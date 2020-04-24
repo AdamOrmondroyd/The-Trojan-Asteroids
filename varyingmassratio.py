@@ -80,7 +80,7 @@ ax.plot(ms, quadratic(ms, a, b, c), label="quadratic fit")
 
 ax.set(
     title="Varying the mass ratio",
-    xlabel="M$_J$/M$_{\mathrm{SUN}}$",
+    xlabel="M$_{\mathrm{J}}$/M$_{\odot}$",
     ylabel="Maximum wander / au",
 )
 ax.legend()
