@@ -60,24 +60,26 @@ class asteroid:
         """Get L5"""
         return self._L5
 
+    def _acceleration(self, t, r, v):
+        """Acceleration of an asteroid at position r with velocity v at time t"""
+        return -G * (
+            M_SUN * (r - self._r_sun) / np.linalg.norm(r - self._r_sun) ** 3
+            + self._M_J * (r - self._r_j) / np.linalg.norm(r - self._r_j) ** 3
+        ) + self._W * np.array(
+            [2 * v[1] + self._W * r[0], -2 * v[0] + self._W * r[1], 0]
+        )  # added coriolis and centrifugal forces
+
+    def _derivs(self, t, y):
+        """derivatives for solver"""
+        return np.hstack((y[3:6], self._acceleration(t, y[0:3], y[3:6])))
+
     def trajectory(self, t_eval, r_0, v_0):
         """Trajectory of asteroid calculated using solve_ivp"""
         y0 = np.append(r_0, v_0)
 
-        def _acceleration(t, r, v):
-            """Acceleration of an asteroid at position r with velocity v at time t"""
-            return -G * (
-                M_SUN * (r - self._r_sun) / np.linalg.norm(r - self._r_sun) ** 3
-                + self._M_J * (r - self._r_j) / np.linalg.norm(r - self._r_j) ** 3
-            ) + self._W * np.array(
-                [2 * v[1] + self._W * r[0], -2 * v[0] + self._W * r[1], 0]
-            )  # added coriolis and centrifugal forces
-
-        def _derivs(t, y):
-            """derivatives for solver"""
-            return np.hstack((y[3:6], _acceleration(t, y[0:3], y[3:6])))
-
-        return solve_ivp(_derivs, (0, t_eval[-1]), y0, t_eval=t_eval, method="LSODA")
+        return solve_ivp(
+            self._derivs, (0, t_eval[-1]), y0, t_eval=t_eval, method="LSODA"
+        )
 
     def max_wander(self, t_eval, r_0, v_0, stability_point):
         """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""

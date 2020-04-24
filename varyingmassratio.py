@@ -25,9 +25,13 @@ def max_wander_wrapper(m):
 
 
 if __name__ == "__main__":
-    pool = multiprocessing.Pool(processes=1)
-    wanders = pool.map(max_wander_wrapper, ms)
+    pool = multiprocessing.Pool()
+    parallel_wanders = pool.map(max_wander_wrapper, ms)
     pool.close()
+
+    wanders = np.zeros(points)
+    for i in range(points):
+        wanders[i] = max_wander_wrapper(ms[i])
 
     def quadratic(x, a, b, c):
         """Quadratic for curve fit"""
@@ -50,11 +54,14 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
 
     ax.plot(ms, wanders, label="wanders", marker="+", linestyle="None")
+    ax.plot(
+        ms, parallel_wanders, label="parallel wanders", marker="+", linestyle="None"
+    )
     ax.plot(ms, quadratic(ms, a, b, c), label="quadratic fit")
 
     ax.set(
         title="Varying the mass ratio",
-        xlabel="M$_\textJ$/M$_{\odot}}$",
+        xlabel="M$_{\mathrm{J}}$/M$_{\odot}}$",
         ylabel="Maximum wander / au",
     )
     ax.legend()
