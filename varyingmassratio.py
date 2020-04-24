@@ -11,33 +11,45 @@ points = 100
 ms = np.linspace(m_min, m_max, points)
 wanders = np.zeros(points)
 
-import constants
 
 for i in range(points):
     print(i)
-    constants.M_SUN = 1
-    constants.M_J = ms[i]
-    constants.R = 5.2
-    constants.R_SUN = constants.R * ms[i] / (ms[i] + constants.M_SUN)
-    constants.R_J = constants.R * constants.M_SUN / (ms[i] + constants.M_SUN)
-    constants.W = 2 * pi * (ms[i] + constants.M_SUN) ** (1 / 2) / constants.R ** (3 / 2)
-    constants.T = 2 * pi / constants.W
-
-    constants.L4 = np.array(
-        [constants.R / 2 - constants.R_SUN, constants.R * np.sqrt(3) / 2, 0]
+    rotatingframe.M_J = ms[i]
+    rotatingframe.R = 5.2
+    rotatingframe.R_SUN = rotatingframe.R * ms[i] / (ms[i] + rotatingframe.M_SUN)
+    rotatingframe.R_J = (
+        rotatingframe.R * rotatingframe.M_SUN / (ms[i] + rotatingframe.M_SUN)
     )
-    constants.L5 = np.array(
-        [constants.R / 2 - constants.R_SUN, -constants.R * np.sqrt(3) / 2, 0]
+    rotatingframe.W = (
+        2 * pi * (ms[i] + rotatingframe.M_SUN) ** (1 / 2) / rotatingframe.R ** (3 / 2)
+    )
+    rotatingframe.T = 2 * pi / rotatingframe.W
+
+    rotatingframe.L4 = np.array(
+        [rotatingframe.R / 2 - rotatingframe.R_SUN, rotatingframe.R * np.sqrt(3) / 2, 0]
+    )
+    rotatingframe.L5 = np.array(
+        [
+            rotatingframe.R / 2 - rotatingframe.R_SUN,
+            -rotatingframe.R * np.sqrt(3) / 2,
+            0,
+        ]
     )
 
-    from rotatingframe import max_wander
+    rotatingframe.r_sun = np.array([-rotatingframe.R_SUN, 0, 0])
+    rotatingframe.r_j = np.array([rotatingframe.R_J, 0, 0])
 
-    end_time = 100 * constants.T
+    print(rotatingframe.M_J)
+
+    end_time = 100 * rotatingframe.T
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-    wanders[i] = max_wander(
-        ts, r_0=constants.L4, v_0=np.array([0, 0, 0]), stability_point=constants.L4,
+    wanders[i] = rotatingframe.max_wander(
+        ts,
+        r_0=rotatingframe.L4,
+        v_0=np.array([0, 0, 0]),
+        stability_point=rotatingframe.L4,
     )
 
 

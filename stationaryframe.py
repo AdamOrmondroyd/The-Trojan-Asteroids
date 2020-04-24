@@ -1,7 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-from constants import G, L4, L5, M_SUN, M_J, R, R_SUN, R_J, W
+
+G = 4 * np.pi ** 2
+M_SUN = 1
+M_J = 0.001
+R = 5.2
+R_SUN = R * M_J / (M_J + M_SUN)
+R_J = R * M_SUN / (M_J + M_SUN)
+W = 2 * np.pi * (M_J + M_SUN) ** (1 / 2) / R ** (3 / 2)
+T = 2 * np.pi / W
+
+L4 = np.array([R / 2 - R_SUN, R * np.sqrt(3) / 2, 0])
+L5 = np.array([R / 2 - R_SUN, -R * np.sqrt(3) / 2, 0])
 
 
 def r_sun(t):
