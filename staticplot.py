@@ -2,13 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import asteroid
 
-# from constants import L4, L5, R, R_SUN, R_J
+ast = asteroid()
 
 end_time = 100
 points_per_year = 1000
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
-
-ast = asteroid()
 
 sol = ast.trajectory(t_eval=ts, r_0=ast.L4, v_0=np.array([0, 0, 0]))
 
@@ -22,7 +20,7 @@ plt.plot(
     linestyle="None",
 )
 plt.plot(
-    ast.R_J,
+    ast.R_P,
     0,
     label="Jupiter",
     color="red",

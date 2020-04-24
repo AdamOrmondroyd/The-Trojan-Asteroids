@@ -50,10 +50,8 @@ if __name__ == "__main__":
     rs = np.outer(ast.L4, xs) / np.linalg.norm(ast.L4)
     ax.plot(rs[0], rs[1], label="Positions for next part")
 
-    jupiter_circle = plt.Circle(
-        (-ast.L4[0], -ast.L4[1]), ast.R_J, color="r", fill=False
-    )
-    ax.add_artist(jupiter_circle)
+    planet_circle = plt.Circle((-ast.L4[0], -ast.L4[1]), ast.R_P, color="r", fill=False)
+    ax.add_artist(planet_circle)
 
     ax.set_aspect("equal", "box")
     ax.set(

@@ -70,10 +70,10 @@ if __name__ == "__main__":
     (sun_line,) = ax.plot(
         [], [], label="sun", color="orange", marker="*", markersize=20, linestyle="None"
     )
-    (j_line,) = ax.plot(
+    (p_line,) = ax.plot(
         [],
         [],
-        label="Jupiter",
+        label="Planet",
         color="red",
         marker="o",
         markersize=10,
@@ -113,8 +113,8 @@ if __name__ == "__main__":
     def animate(i):
         sun_position = ast.r_sun(ts[i])
         sun_line.set_data(sun_position[0], sun_position[1])
-        j_position = ast.r_j(ts[i])
-        j_line.set_data(j_position[0], j_position[1])
+        p_position = ast.r_p(ts[i])
+        p_line.set_data(p_position[0], p_position[1])
 
         l4 = ast.l4(ts[i])
         l4_line.set_data(l4[0], l4[1])
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         time_text.set_text(str(np.round(ts[i], 1)) + " years")
         return (
             sun_line,
-            j_line,
+            p_line,
             l4_line,
             l5_line,
             greeks_line,
