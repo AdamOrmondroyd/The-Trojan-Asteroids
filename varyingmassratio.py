@@ -8,7 +8,7 @@ from scipy.optimize import curve_fit
 
 ### Starts to die at around m=0.36
 m_min = 0.001
-m_max = 0.025
+m_max = 0.04
 points = 100
 ms = np.linspace(m_min, m_max, points)
 
@@ -20,18 +20,21 @@ def max_wander_wrapper(m):
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
     return ast.max_wander(
-        ts, r_0=ast.L4, v_0=np.array([0, 0, 0]), stability_point=ast.L4,
+        ts,
+        r_0=ast.L4 * (1 + 0.01 / np.linalg.norm(ast.L4)),
+        v_0=np.array([0, 0, 0]),
+        stability_point=ast.L4,
     )
 
 
 if __name__ == "__main__":
     pool = multiprocessing.Pool()
-    parallel_wanders = pool.map(max_wander_wrapper, ms)
+    wanders = pool.map(max_wander_wrapper, ms)
     pool.close()
 
-    wanders = np.zeros(points)
-    for i in range(points):
-        wanders[i] = max_wander_wrapper(ms[i])
+    # wanders = np.zeros(points)
+    # for i in range(points):
+    #     wanders[i] = max_wander_wrapper(ms[i])
 
     def quadratic(x, a, b, c):
         """Quadratic for curve fit"""
@@ -54,9 +57,6 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
 
     ax.plot(ms, wanders, label="wanders", marker="+", linestyle="None")
-    ax.plot(
-        ms, parallel_wanders, label="parallel wanders", marker="+", linestyle="None"
-    )
     ax.plot(ms, quadratic(ms, a, b, c), label="quadratic fit")
 
     ax.set(
