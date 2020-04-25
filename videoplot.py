@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
-from stationaryframe import asteroid
+from stationaryframe import StationaryAsteroid
 import multiprocessing
 
-ast = asteroid()
+ast = StationaryAsteroid()
 
 run_time = 10 * ast.T
 fps = 30

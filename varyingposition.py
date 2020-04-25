@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import asteroid
+from rotatingframe import RotatingAsteroid
 import time
 import multiprocessing
 from itertools import product
 
-ast = asteroid()
+ast = RotatingAsteroid()
 
 end_time = 100 * ast.T
 points_per_year = 100
@@ -16,8 +16,8 @@ points = 32
 xs = np.linspace(-spread, spread, points)
 
 
-def max_wander_wrapper(x_offset, y_offset):
-    return ast.max_wander(
+def wander_wrapper(x_offset, y_offset):
+    return ast.wander(
         ts,
         r_0=ast.L4 + np.array([x_offset, y_offset, 0]),
         v_0=np.array([0, 0, 0]),
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     pool = multiprocessing.Pool()
     wanders = np.reshape(
-        pool.starmap(max_wander_wrapper, product(xs, xs)), (points, points), order="F"
+        pool.starmap(wander_wrapper, product(xs, xs)), (points, points), order="F"
     )
     pool.close()
 

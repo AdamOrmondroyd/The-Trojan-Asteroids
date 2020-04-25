@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import asteroid
+from rotatingframe import RotatingAsteroid
 import time
 import multiprocessing
 from scipy.optimize import curve_fit
@@ -13,13 +13,13 @@ points = 100
 ms = np.linspace(m_min, m_max, points)
 
 
-def max_wander_wrapper(m):
-    ast = asteroid(M_P=m)
+def wander_wrapper(m):
+    ast = RotatingAsteroid(M_P=m)
     print(ast.M_P)
     end_time = 100 * ast.T
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
-    return ast.max_wander(
+    return ast.wander(
         ts,
         r_0=ast.L4 * (1 + 0.01 / np.linalg.norm(ast.L4)),
         v_0=np.array([0, 0, 0]),
@@ -31,12 +31,12 @@ if __name__ == "__main__":
     tic = time.time()
 
     pool = multiprocessing.Pool()
-    wanders = pool.map(max_wander_wrapper, ms)
+    wanders = pool.map(wander_wrapper, ms)
     pool.close()
 
     # wanders = np.zeros(points)
     # for i in range(points):
-    #     wanders[i] = max_wander_wrapper(ms[i])
+    #     wanders[i] = wander_wrapper(ms[i])
 
     toc = time.time()
     print("Time taken: {:.1f} s".format(toc - tic))

@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import asteroid
+from rotatingframe import RotatingAsteroid
 import time
 import multiprocessing
 
-ast = asteroid()
+ast = RotatingAsteroid()
 
 end_time = 100 * ast.T
 points_per_year = 100

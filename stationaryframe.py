@@ -4,7 +4,7 @@ from scipy.integrate import solve_ivp
 from constants import G, M_JUPITER, M_SUN, R_0
 
 
-class asteroid:
+class StationaryAsteroid:
     def __init__(self, M_P=M_JUPITER, R=R_0):
         self._M_P = M_P
         self._R = R

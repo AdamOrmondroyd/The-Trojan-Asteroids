@@ -4,7 +4,7 @@ from scipy.integrate import solve_ivp
 from constants import G, M_JUPITER, M_SUN, R_0
 
 
-class asteroid:
+class RotatingAsteroid:
     def __init__(self, M_P=M_JUPITER, R=5.2):
         self._M_P = M_P
         self._R = R
@@ -86,7 +86,7 @@ class asteroid:
             events=events,
         )
 
-    def max_wander(self, t_eval, r_0, v_0, stability_point):
+    def wander(self, t_eval, r_0, v_0, stability_point):
         """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
         sol = self.trajectory(t_eval, r_0, v_0)
         rs = sol.y[0:3]  # extract positions from solution

@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import asteroid
+from rotatingframe import RotatingAsteroid
 import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
-ast = asteroid()
+ast = RotatingAsteroid()
 
 end_time = 100 * ast.T
 points_per_year = 100
@@ -16,8 +16,8 @@ points = 100
 vs = np.linspace(-spread, spread, points)
 
 
-def max_wander_wrapper(v_offset):
-    return ast.max_wander(
+def wander_wrapper(v_offset):
+    return ast.wander(
         ts,
         r_0=ast.L4,
         v_0=np.array([-ast.L4[1], ast.L4[0], 0]) / np.linalg.norm(ast.L4) * v_offset,
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     tic = time.time()
 
     pool = multiprocessing.Pool()
-    wanders = pool.map(max_wander_wrapper, vs)
+    wanders = pool.map(wander_wrapper, vs)
     pool.close()
 
     toc = time.time()
@@ -42,13 +42,13 @@ if __name__ == "__main__":
         quadratic, vs[points // 2 :], wanders[points // 2 :]
     )
 
-    positive_equation_string = "{:.1f}x$^2$ {:+.1f}x {:+.3e}".format(a1, b1, c1)
+    positive_equation_string = "{:.1f}v$^2$ {:+.1f}v {:+.3e}".format(a1, b1, c1)
 
     (a2, b2, c2), pcov2 = curve_fit(
         quadratic, vs[: points // 2], wanders[: points // 2]
     )
 
-    negative_equation_string = "{:.1f}x$^2$ {:+.1f}x {:+.3e}".format(a2, b2, c2)
+    negative_equation_string = "{:.1f}v$^2$ {:+.1f}v {:+.3e}".format(a2, b2, c2)
 
     fig, ax = plt.subplots()
 
@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     ax.set(
         title="Wander due to velocity perturbation perpendicular to L$_4$",
-        xlabel="Velocity perpendicular to L$_4$ / (au/year)",
-        ylabel="Maximum wander / au",
+        xlabel="velocity perturbation perpendicular to L$_4$ / (au/year)",
+        ylabel="maximum wander / au",
     )
     ax.legend()
 

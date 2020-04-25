@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from rotatingframe import asteroid
+from rotatingframe import RotatingAsteroid
 import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
-ast = asteroid()
+ast = RotatingAsteroid()
 
 end_time = 100 * ast.T
 points_per_year = 100
@@ -16,8 +16,8 @@ points = 100
 rs = np.linspace(-spread, spread, points)
 
 
-def max_wander_wrapper(r_offset):
-    return ast.max_wander(
+def wander_wrapper(r_offset):
+    return ast.wander(
         ts,
         r_0=ast.L4 * (1.0 + r_offset / np.linalg.norm(ast.L4)),
         v_0=np.array([0, 0, 0]),
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     tic = time.time()
 
     pool = multiprocessing.Pool()
-    wanders = pool.map(max_wander_wrapper, rs)
+    wanders = pool.map(wander_wrapper, rs)
     pool.close()
 
     toc = time.time()
@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     ax.set(
         title="Wander due to position purturbation along L$_4$",
-        xlabel="Offset along L$_4$ / au",
-        ylabel="Maximum wander / au",
+        xlabel="offset along L$_4$ / au",
+        ylabel="maximum wander / au",
     )
     ax.legend()
 
