@@ -37,8 +37,15 @@ class RotatingAsteroid:
         self._W = np.sqrt(G * (self._M_P + M_SUN) / R ** 3)
         self._T = 2 * np.pi / self._W
 
-        self._L4 = np.array([self._R / 2 - self._R_SUN, self._R * np.sqrt(3) / 2, 0])
-        self._L5 = np.array([self._R / 2 - self._R_SUN, -self._R * np.sqrt(3) / 2, 0])
+
+def acceleration(t, r, v):
+    """Acceleration of an asteroid at position r and time t"""
+    return -G * (
+        M_SUN * (r - r_sun) / np.linalg.norm(r - r_sun) ** 3
+        + M_J * (r - r_j) / np.linalg.norm(r - r_j) ** 3
+    ) + W * np.array(
+        [2 * v[1] + W * r[0], -2 * v[0] + W * r[1], 0]
+    )  # added coriolis and centrifugal forces
 
     ### Getter methods
     @property
