@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     (a, b, c), pcov = curve_fit(quadratic, vs, wanders)
 
-    equation_string = "{:.2f}v$_z^2$ {:+.2f}v$_z$ {:+.2f}".format(a, b, c)
+    equation_string = "{:.2f}v$_z^2$ {:+.2e}v$_z$ {:+.2e}".format(a, b, c)
 
     fig, ax = plt.subplots()
 
