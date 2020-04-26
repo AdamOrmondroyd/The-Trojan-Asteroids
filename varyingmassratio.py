@@ -5,7 +5,7 @@ import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
-fig, ax = plt.subplots(1, 3, figsize=(12, 5))
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
 
 def wander_wrapper(m):
@@ -22,91 +22,64 @@ def wander_wrapper(m):
     )
 
 
-def quadratic(x, a, b, c):
-    """quadratic for curve fitting"""
-    # return a * x ** 2 + b * x + c
-    # return np.cosh((x - a) / b) + c
-    # return a * x ** 4 + b * x ** 3 + c * x ** 2 + d * x + e
-    return a * (x - b) ** 6 + c
+def exponential_decay(x, a, b):
+    """exponential decay for curve fitting"""
+    return a / x ** 0.5 + b
 
 
 ### Smaller masses ###
 
 if __name__ == "__main__":
     m_min = 0.00001
-    m_max = 0.002
-    points = 30
+    m_max = 0.001
+    points = 100
     ms = np.linspace(m_min, m_max, points)
-
-    tic = time.time()
 
     pool = multiprocessing.Pool()
     wanders = pool.map(wander_wrapper, ms)
     pool.close()
 
-    ax[0].plot(ms, wanders, label="wanders", marker="+", color="c", linestyle="None")
+    (a, b), pcov = curve_fit(exponential_decay, ms, wanders)
+
+    equation_string = "{:.2e}/√m + {:.2e}".format(a, b)
+
+    ax[0].plot(ms, wanders, label="wanders", color="c", marker="+", linestyle="None")
+    ax[0].plot(
+        ms,
+        exponential_decay(ms, a, b),
+        label=equation_string,
+        color="k",
+        linestyle="--",
+    )
 
     ax[0].set(
         title="M$_\mathrm{{P}}$ from {}M$_\odot$ to {}M$_\odot$".format(m_min, m_max),
         xlabel="M$_{\mathrm{P}}$/M$_{\odot}}$",
-        ylabel="Maximum wander / au",
+        ylabel="wander / au",
     )
 
-    ### Medium masses ###
+    ### Larger masses ###
 
-    m_min = 0.001
-    m_max = 0.035
+    m_min = 0.0
+    m_max = 0.044
     ms = np.linspace(m_min, m_max, points)
 
     pool = multiprocessing.Pool()
     wanders = pool.map(wander_wrapper, ms)
     pool.close()
 
-    (a, b, c), pcov = curve_fit(quadratic, ms, wanders)
-
-    print(a)
-    print(b)
-    print(c)
-
-    equation_string = "{:.1f}m$^2$ {:+.1f}m {:+.3e}".format(a, b, c)
-
-    print("Minimum at {} ± {}".format(a, np.sqrt(pcov[0, 0])))
-
     ax[1].plot(
         ms, wanders, label="wanders", marker="+", color="c", linestyle="None",
-    )
-    ax[1].plot(
-        ms, quadratic(ms, a, b, c), label=equation_string, color="k", linestyle="--",
     )
 
     ax[1].set(
         title="M$_\mathrm{{P}}$ from {}M$_\odot$ to {}M$_\odot$".format(m_min, m_max),
         xlabel="M$_{\mathrm{P}}$/M$_{\odot}}$",
-        ylabel="Maximum wander / au",
-        xticks=np.linspace(0, m_max, 8),
+        ylabel="wander / au",
+        # xticks=np.linspace(0, m_max, 8),
     )
 
-    ### Big masses ###
-    m_min = 0.001
-    m_max = 0.042
-    ms = np.linspace(m_min, m_max, points)
-
-    pool = multiprocessing.Pool()
-    wanders = pool.map(wander_wrapper, ms)
-    pool.close()
-
-    toc = time.time()
-    print("Time taken: {:.1f} s".format(toc - tic))
-
-    ax[2].plot(ms, wanders, label="wanders", marker="+", color="c", linestyle="None")
-
-    ax[2].set(
-        title="M$_\mathrm{{P}}$ from {}M$_\odot$ to {}M$_\odot$".format(m_min, m_max),
-        xlabel="M$_{\mathrm{P}}$/M$_{\odot}}$",
-        ylabel="Maximum wander / au",
-    )
-
-    handles, labels = ax[1].get_legend_handles_labels()
+    handles, labels = ax[0].get_legend_handles_labels()
     fig.legend(
         handles,
         labels,

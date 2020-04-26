@@ -32,24 +32,22 @@ if __name__ == "__main__":
     toc = time.time()
     print("Time taken: {:.1f} s".format(toc - tic))
 
-    def quadratic(x, a, b, c):
-        return a * x ** 2 + b * x + c
+    def quadratic(x, a, b):
+        return a * x ** 2 + b
 
-    (a, b, c), pcov = curve_fit(quadratic, vs, wanders)
+    (a, b), pcov = curve_fit(quadratic, vs, wanders)
 
-    equation_string = "{:.2f}v$_z^2$ {:+.2e}v$_z$ {:+.2e}".format(a, b, c)
+    equation_string = "{:.2f}v$_z^2$ {:+.2e}".format(a, b)
 
     fig, ax = plt.subplots()
 
     ax.plot(vs, wanders, label="wanders", color="c", marker="+", linestyle="None")
-    ax.plot(
-        vs, quadratic(vs, a, b, c), label=equation_string, color="k", linestyle="--"
-    )
+    ax.plot(vs, quadratic(vs, a, b), label=equation_string, color="k", linestyle="--")
 
     ax.set(
         title="Wander due to velocity perturbation along z",
         xlabel="z velocity perturbation / (au/year)",
-        ylabel="Maximum wander / au",
+        ylabel="wander / au",
     )
     ax.legend()
 

@@ -35,25 +35,23 @@ if __name__ == "__main__":
     toc = time.time()
     print("Time taken: {:.1f} s".format(toc - tic))
 
-    def quadratic(x, a, b, c):
-        return a * x ** 2 + b * x + c
+    def quadratic(x, a, b):
+        return a * x ** 2 + b
 
-    (a, b, c), pcov = curve_fit(quadratic, zs, wanders)
+    (a, b), pcov = curve_fit(quadratic, zs, wanders)
 
-    equation_string = "{:.2f}z$^2$ {:+.2f}z {:+.2f}".format(a, b, c)
+    equation_string = "{:.2f}z$^2$ {:+.2e}".format(a, b)
 
     fig, ax = plt.subplots()
 
     ax.plot(zs, wanders, marker="+", label="wanders", linestyle="None", color="c")
 
-    ax.plot(
-        zs, quadratic(zs, a, b, c), label=equation_string, linestyle="--", color="k"
-    )
+    ax.plot(zs, quadratic(zs, a, b), label=equation_string, linestyle="--", color="k")
 
     ax.set(
         title="Wander due to position purturbation along z",
         xlabel="z offset / au",
-        ylabel="Maximum wander / au",
+        ylabel="wander / au",
     )
     ax.legend()
 

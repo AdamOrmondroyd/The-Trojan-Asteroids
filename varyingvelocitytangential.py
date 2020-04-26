@@ -75,7 +75,7 @@ if __name__ == "__main__":
     ax.set(
         title="Wander due to velocity perturbation perpendicular to L$_4$",
         xlabel="velocity perturbation perpendicular to L$_4$ / (au/year)",
-        ylabel="maximum wander / au",
+        ylabel="wander / au",
     )
     ax.legend()
 

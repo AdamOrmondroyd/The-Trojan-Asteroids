@@ -12,7 +12,7 @@ ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
 z_min = 0.01
 z_max = 1.0
-points = 100
+points = 50
 zs = np.linspace(z_min, z_max, points)
 
 
@@ -39,9 +39,9 @@ sol = ast.trajectory(ts, ast.L4 + np.array([0, 0, z]), v_0=np.array([0, 0, 0]))
 ax[0].plot(ts, sol.y[2], label="oscillations", color="k", linestyle="-")
 
 ax[0].set(
-    title="z oscillations: time period = {:.2f} years".format(time_period_wrapper(z)),
-    xlabel="z / au",
-    ylabel="time / years",
+    title="z oscillations: time period = {:.3f} years".format(time_period_wrapper(z)),
+    xlabel="time / years",
+    ylabel="z / au",
 )
 
 ax[1].plot(sol.y[0], sol.y[1], label="asteroid", color="green", linestyle="-")
@@ -55,6 +55,7 @@ ax[1].set(
 )
 ax[1].set_aspect("equal")
 ax[1].legend()
+
 ### Investigating time period ###
 
 if __name__ == "__main__":
@@ -67,10 +68,24 @@ if __name__ == "__main__":
     toc = time.time()
     print("Time taken: {:.1f} s".format(toc - tic))
 
+    expected_T = ast.T * np.sqrt(ast.R / np.linalg.norm(ast.L4))
+
     print("Planet orbit period: {:.4f} years".format(ast.T))
+    print("Expected period for small oscillations: {:.4f} years".format(expected_T))
 
     ax[2].plot(zs, periods, label="periods", marker="+", color="c", linestyle="None")
-    ax[2].axhline(ast.T, label="planet orbit period", color="k", linestyle="--")
+    ax[2].axhline(
+        ast.T,
+        label="planet orbit period = {:.3f} years".format(ast.T),
+        color="k",
+        linestyle="--",
+    )
+    ax[2].axhline(
+        ast.T,
+        label="harmonic period = {:.3f} years".format(expected_T),
+        color="r",
+        linestyle="--",
+    )
     ax[2].set(
         title="Time periods",
         xlabel="z offset / au",
