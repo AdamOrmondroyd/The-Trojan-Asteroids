@@ -11,9 +11,9 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 1.5
+z_spread = 1.0
 points = 100
-zs = np.linspace(0.1, spread, points)
+zs = np.linspace(-z_spread, z_spread, points)
 
 
 def wander_wrapper(z_offset):
@@ -38,12 +38,9 @@ if __name__ == "__main__":
     def quadratic(x, a, b, c):
         return a * x ** 2 + b * x + c
 
-    def linear(x, a, b):
-        return a * x + b
-
     (a, b, c), pcov = curve_fit(quadratic, zs, wanders)
 
-    equation_string = "{:.2f}x$^2$ {:+.3e}x {:+.3e}".format(a, b, c)
+    equation_string = "{:.2f}z$^2$ {:+.2f}z {:+.2f}".format(a, b, c)
 
     fig, ax = plt.subplots()
 
@@ -63,10 +60,4 @@ if __name__ == "__main__":
     filename = "plots\\position_wanders_z"
     plt.savefig(filename + ".png")
     plt.savefig(filename + ".eps")
-    plt.show()
-
-    (d, e), pcov = curve_fit(linear, zs, wanders)
-
-    plt.plot(np.log(zs), np.log(wanders))
-    plt.plot(np.log(zs,))
     plt.show()

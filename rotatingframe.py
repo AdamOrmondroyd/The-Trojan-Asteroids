@@ -73,7 +73,7 @@ class RotatingAsteroid:
         """derivatives for solver"""
         return np.hstack((y[3:6], self._acceleration(t, y[0:3], y[3:6])))
 
-    def trajectory(self, t_eval, r_0, v_0, events=None):
+    def trajectory(self, t_eval, r_0, v_0, events=None, method="Radau"):
         """Trajectory of asteroid calculated using solve_ivp"""
         y0 = np.append(r_0, v_0)
 
@@ -82,13 +82,13 @@ class RotatingAsteroid:
             (0, t_eval[-1]),
             y0,
             t_eval=t_eval,
-            method="LSODA",
+            method=method,
             events=events,
         )
 
-    def wander(self, t_eval, r_0, v_0, stability_point):
-        """Find the maximum distance from the starting point for given initial conditions in the rotating frame"""
-        sol = self.trajectory(t_eval, r_0, v_0)
+    def wander(self, t_eval, r_0, v_0, stability_point, method="Radau"):
+        """Find the maximum distance from the stability point for given initial conditions in the rotating frame"""
+        sol = self.trajectory(t_eval, r_0, v_0, method=method)
         rs = sol.y[0:3]  # extract positions from solution
         deltas = (
             rs.T - stability_point

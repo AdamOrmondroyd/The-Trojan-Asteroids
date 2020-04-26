@@ -1,16 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from stationaryframe import asteroid
+from stationaryframe import StationaryAsteroid
 import time
 
-ast = asteroid()
+ast = StationaryAsteroid()
 
-end_time = 1000
-points_per_year = 10
+end_time = 100 * ast.T
+points_per_year = 1
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-sol = ast.trajectory(t_eval=ts, r_0=ast.l4(0), v_0=ast.omega_cross(ast.l4(0)))
-# sol = asteroid(t_eval=ts, r_0=L4, v_0=np.array([0, 0, 0]))
+position_spread = 0.1
+velocity_spread = 0.1
+r_offset = (np.random.rand(3) - 0.5) * position_spread
+v_offset = (np.random.rand(3) - 0.5) * velocity_spread
+r_0 = ast.l4(0) + r_offset
+v_0 = ast.omega_cross(r_0) + v_offset
+print("Initial perturbation about L4")
+print("r offset = " + str(r_offset))
+print("v offset = " + str(v_offset))
+
+sol = ast.trajectory(ts, r_0, v_0)
 
 energies = ast.specific_energy(ts, sol.y[0:3], sol.y[3:6])
 
@@ -18,9 +27,15 @@ print("Mean specific energy: " + str(np.mean(energies)) + "(au/year)²")
 print("Range: " + str(np.ptp(energies)) + "(au/year)²")
 print("Range/mean: " + str(np.abs(np.ptp(energies) / np.mean(energies))))
 
-plt.plot(ts, energies, label="energy", marker="+", linestyle="None")
-plt.xlabel("time/years")
-plt.ylabel("energy/(au/year)²")
+fig, ax = plt.subplots()
 
-plt.legend()
+ax.plot(ts, energies, label="energy", color="c", marker="+", linestyle="None")
+ax.set(
+    title="Variation of energy",
+    xlabel="time/years",
+    ylabel="specific energy/(au/year)²",
+)
+filename = "plots\\energy_variation"
+plt.savefig(filename + ".png")
+plt.savefig(filename + ".eps")
 plt.show()

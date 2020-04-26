@@ -6,7 +6,7 @@ import multiprocessing
 
 ast = RotatingAsteroid()
 
-end_time = 100 * ast.T
+end_time = 10 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
@@ -28,6 +28,35 @@ def time_period_wrapper(z):
     return np.mean(np.diff(sol.t_events)) * 2.0
 
 
+### Single plot for demonstration ###
+
+fig, ax = plt.subplots(1, 3, figsize=(12, 4))
+
+z = 1.0
+
+sol = ast.trajectory(ts, ast.L4 + np.array([0, 0, z]), v_0=np.array([0, 0, 0]))
+
+ax[0].plot(ts, sol.y[2], label="oscillations", color="k", linestyle="-")
+
+ax[0].set(
+    title="z oscillations: time period = {:.2f} years".format(time_period_wrapper(z)),
+    xlabel="z / au",
+    ylabel="time / years",
+)
+
+ax[1].plot(sol.y[0], sol.y[1], label="asteroid", color="green", linestyle="-")
+ax[1].plot(ast.L4[0], ast.L4[1], label="L$_4$", color="blue", marker="+")
+ax[1].set(
+    title="Resulting tadpole orbit",
+    xlabel="x/au",
+    ylabel="y/au",
+    xlim=[-3, 5],
+    ylim=[-1, 7],
+)
+ax[1].set_aspect("equal")
+ax[1].legend()
+### Investigating time period ###
+
 if __name__ == "__main__":
     tic = time.time()
 
@@ -38,20 +67,18 @@ if __name__ == "__main__":
     toc = time.time()
     print("Time taken: {:.1f} s".format(toc - tic))
 
-    print("Mean time period: {:.4f} ± {:.4f}".format(np.mean(periods), np.std(periods)))
-
     print("Planet orbit period: {:.4f} years".format(ast.T))
 
-    fig, ax = plt.subplots()
-
-    ax.plot(zs, periods, label="periods", marker="+", color="c", linestyle="None")
-    ax.axhline(np.mean(periods), label="mean period", color="k", linestyle="--")
-    ax.set(
-        title="Wander due to position purturbation along z",
+    ax[2].plot(zs, periods, label="periods", marker="+", color="c", linestyle="None")
+    ax[2].axhline(ast.T, label="planet orbit period", color="k", linestyle="--")
+    ax[2].set(
+        title="Time periods",
         xlabel="z offset / au",
         ylabel="oscillation period / years",
     )
-    ax.legend()
+    ax[2].legend()
+
+    fig.tight_layout()
 
     filename = "plots\\z_oscillations"
     plt.savefig(filename + ".png")

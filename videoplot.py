@@ -7,7 +7,7 @@ import multiprocessing
 
 ast = StationaryAsteroid()
 
-run_time = 10 * ast.T
+run_time = 100 * ast.T
 fps = 30
 seconds_per_year = 0.2
 num_greeks = 100

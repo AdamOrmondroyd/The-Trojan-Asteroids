@@ -11,9 +11,9 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 0.05
+position_spread = 0.05
 points = 100
-rs = np.linspace(-spread, spread, points)
+rs = np.linspace(-position_spread, position_spread, points)
 
 
 def wander_wrapper(r_offset):

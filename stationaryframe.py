@@ -52,21 +52,21 @@ class StationaryAsteroid:
 
     def l4(self, t):
         """Position of L_4 at time t"""
-        return np.array(
+        return np.stack(
             (
                 self._L4[0] * np.cos(self._W * t) - self._L4[1] * np.sin(self._W * t),
                 self._L4[0] * np.sin(self._W * t) + self._L4[1] * np.cos(self._W * t),
-                0,
+                0.0 * t,
             )
         )
 
     def l5(self, t):
         """Position of L_4 at time t"""
-        return np.array(
+        return np.stack(
             [
                 self._L5[0] * np.cos(self._W * t) - self._L5[1] * np.sin(self._W * t),
                 self._L5[0] * np.sin(self._W * t) + self._L5[1] * np.cos(self._W * t),
-                0,
+                0.0 * t,
             ]
         )
 
@@ -96,7 +96,7 @@ class StationaryAsteroid:
         return kinetic + potential
 
     def omega_cross(self, r):
-        """Returns the result of W x r"""
+        """Returns the result of W x r (for convenience)"""
         return np.array([-self.W * r[1], self.W * r[0], 0])
 
     def _acceleration(self, t, r):
@@ -110,7 +110,7 @@ class StationaryAsteroid:
         """derivatives of asteroid for solver"""
         return np.hstack((y[3:6], self._acceleration(t, y[0:3])))
 
-    def trajectory(self, t_eval, r_0, v_0, events=None):
+    def trajectory(self, t_eval, r_0, v_0, events=None, method="Radau"):
         """Trajectory of asteroid calculated using solve_ivp"""
         y0 = np.append(r_0, v_0)
         return solve_ivp(
@@ -118,6 +118,14 @@ class StationaryAsteroid:
             (0, t_eval[-1]),
             y0,
             t_eval=t_eval,
-            method="Radau",
+            method=method,
             events=events,
         )
+
+    def wander(self, t_eval, r_0, v_0, method="Radau"):
+        """Find the maximum distance from L4 point for given initial conditions in the rotating frame"""
+        sol = self.trajectory(t_eval, r_0, v_0, method=method)
+        rs = sol.y[0:3]  # extract positions from solution
+        deltas = rs - self.l4(t_eval)  # Transpose used to stick to array convention
+        norms = np.linalg.norm(deltas, axis=0)
+        return norms.max()

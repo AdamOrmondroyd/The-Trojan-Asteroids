@@ -11,9 +11,9 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 0.05
+position_spread = 0.05
 points = 32
-xs = np.linspace(-spread, spread, points)
+xs = np.linspace(-position_spread, position_spread, points)
 
 
 def wander_wrapper(x_offset, y_offset):
@@ -27,8 +27,8 @@ def wander_wrapper(x_offset, y_offset):
 
 if __name__ == "__main__":
     tic = time.time()
-
-    pool = multiprocessing.Pool()
+    print("This program is using {} threads".format(multiprocessing.cpu_count()))
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     wanders = np.reshape(
         pool.starmap(wander_wrapper, product(xs, xs)), (points, points), order="F"
     )
@@ -64,8 +64,8 @@ if __name__ == "__main__":
         title="Wander as a function of initial position",
         xlabel="x offset / au",
         ylabel="y offset / au",
-        xlim=[-spread, spread],
-        ylim=[-spread, spread],
+        xlim=[-position_spread, position_spread],
+        ylim=[-position_spread, position_spread],
     )
     ax.legend()
 

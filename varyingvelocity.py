@@ -11,9 +11,9 @@ end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
-spread = 0.05
+v_spread = 0.05
 points = 32
-vs = np.linspace(-spread, spread, points)
+vs = np.linspace(-v_spread, v_spread, points)
 
 
 def wander_wrapper(vx_offset, vy_offset):
@@ -52,8 +52,8 @@ if __name__ == "__main__":
         title="Wander as a function of initial velocity",
         xlabel="Initial v$_{\mathrm{x}}$ / (au/year)",
         ylabel="Initial v$_{\mathrm{y}}$ / (au/year)",
-        xlim=[-spread, spread],
-        ylim=[-spread, spread],
+        xlim=[-v_spread, v_spread],
+        ylim=[-v_spread, v_spread],
     )
     ax.legend()
 
