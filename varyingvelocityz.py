@@ -1,12 +1,15 @@
+"""
+Generates plot for wander for velocity perturbations in the z direction from L4.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
 ast = RotatingAsteroid()
 
+# 100 samples per year for 100 planetary orbits
 end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -17,20 +20,18 @@ vs = np.linspace(-vz_spread, vz_spread, points)
 
 
 def wander_wrapper(v_offset):
+    """Wrapper to put correct arguments into wander method for given z velocity perturbation"""
     return ast.wander(
         ts, r_0=ast.L4, v_0=np.array([0, 0, v_offset]), stability_point=ast.L4,
     )
 
 
-if __name__ == "__main__":
-    tic = time.time()
-
+if __name__ == "__main__": # Required for multiprocessing to work properly
     pool = multiprocessing.Pool()
     wanders = pool.map(wander_wrapper, vs)
     pool.close()
 
-    toc = time.time()
-    print("Time taken: {:.1f} s".format(toc - tic))
+    ### Fitting quadratic ###
 
     def quadratic(x, a, b):
         return a * x ** 2 + b
@@ -38,6 +39,8 @@ if __name__ == "__main__":
     (a, b), pcov = curve_fit(quadratic, vs, wanders)
 
     equation_string = "{:.2f}v$_z^2$ {:+.2e}".format(a, b)
+
+    ### Plotting ###
 
     fig, ax = plt.subplots()
 

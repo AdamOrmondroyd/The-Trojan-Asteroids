@@ -1,3 +1,9 @@
+"""
+Generates a video of the asteroids in the stationary frame.
+
+Asteroids are perturbed about L4 and L5, and their behaviour in the orbital plane is recorded
+as an mp4 file.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
@@ -7,6 +13,7 @@ import multiprocessing
 
 ast = StationaryAsteroid()
 
+# Run for 100 planetary orbits
 run_time = 100 * ast.T
 fps = 30
 seconds_per_year = 0.2

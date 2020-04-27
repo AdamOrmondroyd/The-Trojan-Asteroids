@@ -1,3 +1,10 @@
+"""
+Plots for various initial conditions in the rotating frame, resulting in
+tadpole, curved tadpole, horseshoe and passing orbits.
+
+Note: the simulations are all run for shorter times than 100 years to avoid
+the plots becoming unclear.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from constants import M_SUN
@@ -7,13 +14,14 @@ ast = RotatingAsteroid()
 
 points_per_year = 1000
 
-# Approximate radius of L3
+# Approximate radius of L3 for plotting
 L3 = ast.R_P + 7 * ast.R * ast.M_P / (12 * M_SUN)
 
 fig, ax = plt.subplots(2, 2, figsize=(7, 8))
 
 ### Tadpole ###
 
+# 100 samples per year for 15 planetary orbits
 end_time = 15 * ast.T
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
@@ -30,6 +38,7 @@ ax[0, 0].set_aspect("equal", "box")
 
 ### Curved tadpole ###
 
+# 100 samples per year for 15 planetary orbits
 end_time = 15 * ast.T
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
@@ -72,6 +81,7 @@ ax[0, 1].set_aspect("equal", "box")
 
 ### Horseshoe ###
 
+# 100 samples per year for 30 planetary orbits
 end_time = 30 * ast.T
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 
@@ -118,6 +128,7 @@ ax[1, 0].set_aspect("equal", "box")
 
 ### Passing ###
 
+# 100 samples per year for 15 planetary orbits
 end_time = 15 * ast.T
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
 

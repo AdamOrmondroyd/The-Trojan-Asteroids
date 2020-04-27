@@ -1,11 +1,17 @@
+"""
+Generates plots investigating oscillations in the z direction
+
+Uses the rotating frame to plot the oscillating behaviour of an asteroid perturbed
+in the z direction, then plots time period for varying perturbations.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 
 ast = RotatingAsteroid()
 
+# 100 samples per year for 100 planetary orbits
 end_time = 10 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -22,6 +28,7 @@ def zero(t, y):
 
 
 def time_period_wrapper(z):
+    """Wrapper to find time period for given z position perturbation"""
     sol = ast.trajectory(
         ts, ast.L4 + np.array([0, 0, z]), v_0=np.array([0, 0, 0]), events=zero
     )
@@ -36,6 +43,8 @@ z = 1.0
 
 sol = ast.trajectory(ts, ast.L4 + np.array([0, 0, z]), v_0=np.array([0, 0, 0]))
 
+### z against time ###
+
 ax[0].plot(ts, sol.y[2], label="oscillations", color="k", linestyle="-")
 
 ax[0].set(
@@ -43,6 +52,8 @@ ax[0].set(
     xlabel="time / years",
     ylabel="z / au",
 )
+
+### Motion in orbital plane ###
 
 ax[1].plot(sol.y[0], sol.y[1], label="asteroid", color="green", linestyle="-")
 ax[1].plot(ast.L4[0], ast.L4[1], label="L$_4$", color="blue", marker="+")
@@ -58,32 +69,22 @@ ax[1].legend()
 
 ### Investigating time period ###
 
-if __name__ == "__main__":
-    tic = time.time()
+if __name__ == "__main__":  # Required for multiprocessing to work properly
 
     pool = multiprocessing.Pool()
     periods = pool.map(time_period_wrapper, zs)
     pool.close()
 
-    toc = time.time()
-    print("Time taken: {:.1f} s".format(toc - tic))
-
     expected_T = ast.T * np.sqrt(ast.R / np.linalg.norm(ast.L4))
 
     print("Planet orbit period: {:.4f} years".format(ast.T))
-    print("Expected period for small oscillations: {:.4f} years".format(expected_T))
+    print("Predicted period for small oscillations: {:.4f} years".format(expected_T))
 
     ax[2].plot(zs, periods, label="periods", marker="+", color="c", linestyle="None")
     ax[2].axhline(
         ast.T,
-        label="planet orbit period = {:.3f} years".format(ast.T),
+        label="predicted period = {:.3f} years".format(expected_T),
         color="k",
-        linestyle="--",
-    )
-    ax[2].axhline(
-        ast.T,
-        label="harmonic period = {:.3f} years".format(expected_T),
-        color="r",
         linestyle="--",
     )
     ax[2].set(
@@ -91,7 +92,7 @@ if __name__ == "__main__":
         xlabel="z offset / au",
         ylabel="oscillation period / years",
     )
-    ax[2].legend()
+    ax[2].legend(frameon=False)
 
     fig.tight_layout()
 

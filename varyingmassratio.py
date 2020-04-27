@@ -1,7 +1,9 @@
+"""
+Generates plots for wander due to varying planet mass, starting with a radial perturbation of 1e-4 au
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
@@ -9,14 +11,15 @@ fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
 
 def wander_wrapper(m):
+    """Wrapper to find wander for given planet mass m, for asteroid starting 1e-4 au radially outwards of L4"""
     ast = RotatingAsteroid(M_P=m)
-    print(ast.M_P)
+    # 100 samples per year for 100 planetary orbits
     end_time = 100 * ast.T
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
     return ast.wander(
         ts,
-        r_0=ast.L4 * (1 + 0.0001 / np.linalg.norm(ast.L4)),
+        r_0=ast.L4 * (1 + 1e-4 / np.linalg.norm(ast.L4)),
         v_0=np.array([0, 0, 0]),
         stability_point=ast.L4,
     )
@@ -27,11 +30,11 @@ def exponential_decay(x, a, b):
     return a / x ** 0.5 + b
 
 
-### Smaller masses ###
+if __name__ == "__main__":  # Required for multiprocessing to work properly
+    ### Smaller masses ###
 
-if __name__ == "__main__":
-    m_min = 0.00001
-    m_max = 0.001
+    m_min = 1e-5
+    m_max = 1e-3
     points = 100
     ms = np.linspace(m_min, m_max, points)
 
@@ -39,9 +42,13 @@ if __name__ == "__main__":
     wanders = pool.map(wander_wrapper, ms)
     pool.close()
 
+    ### Fit 1/√x ###
+
     (a, b), pcov = curve_fit(exponential_decay, ms, wanders)
 
     equation_string = "{:.2e}/√m + {:.2e}".format(a, b)
+
+    ### Plotting ###
 
     ax[0].plot(ms, wanders, label="wanders", color="c", marker="+", linestyle="None")
     ax[0].plot(
@@ -68,6 +75,8 @@ if __name__ == "__main__":
     wanders = pool.map(wander_wrapper, ms)
     pool.close()
 
+    ### Plotting ###
+
     ax[1].plot(
         ms, wanders, label="wanders", marker="+", color="c", linestyle="None",
     )
@@ -76,7 +85,6 @@ if __name__ == "__main__":
         title="M$_\mathrm{{P}}$ from {}M$_\odot$ to {}M$_\odot$".format(m_min, m_max),
         xlabel="M$_{\mathrm{P}}$/M$_{\odot}}$",
         ylabel="wander / au",
-        # xticks=np.linspace(0, m_max, 8),
     )
 
     handles, labels = ax[0].get_legend_handles_labels()

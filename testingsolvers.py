@@ -1,5 +1,9 @@
 """
-Comparing the solving methods DOP853, Radau, BDF and LSODA
+Comparing the solving methods DOP853, Radau, BDF and LSODA included in 
+scipy.integrate.solve_ivp
+
+For each solver, the wander from L4 was found in both the stationary
+and rotating frames.
 """
 import numpy as np
 from stationaryframe import StationaryAsteroid

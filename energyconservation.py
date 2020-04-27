@@ -1,3 +1,7 @@
+"""
+Testing the conservation of energy using the Radau method for random 
+perturbations about L4
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from stationaryframe import StationaryAsteroid
@@ -5,6 +9,7 @@ import time
 
 ast = StationaryAsteroid()
 
+# 100 samples per year for 100 planetary orbits
 end_time = 100 * ast.T
 points_per_year = 1
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -23,9 +28,12 @@ sol = ast.trajectory(ts, r_0, v_0)
 
 energies = ast.specific_energy(ts, sol.y[0:3], sol.y[3:6])
 
+# Print findings
 print("Mean specific energy: " + str(np.mean(energies)) + "(au/year)²")
 print("Range: " + str(np.ptp(energies)) + "(au/year)²")
 print("Range/mean: " + str(np.abs(np.ptp(energies) / np.mean(energies))))
+
+### Plotting ###
 
 fig, ax = plt.subplots()
 

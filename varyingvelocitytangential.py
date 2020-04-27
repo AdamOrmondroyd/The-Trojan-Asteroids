@@ -1,12 +1,17 @@
+"""
+Generates plot for wander for velocity perturbations tangent to the planet's
+orbital circle.
+Note that v is positive going away from the planet, towards L3.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
 ast = RotatingAsteroid()
 
+# 100 samples per year for 100 planetary orbits
 end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -17,6 +22,7 @@ vs = np.linspace(-v_spread, v_spread, points)
 
 
 def wander_wrapper(v_offset):
+    """Wrapper to put the correct arguments into wander method for given tangential velocity perturbation"""
     return ast.wander(
         ts,
         r_0=ast.L4,
@@ -25,15 +31,12 @@ def wander_wrapper(v_offset):
     )
 
 
-if __name__ == "__main__":
-    tic = time.time()
-
+if __name__ == "__main__": # Required for multiprocessing to work properly
     pool = multiprocessing.Pool()
     wanders = pool.map(wander_wrapper, vs)
     pool.close()
 
-    toc = time.time()
-    print("Time taken: {:.1f} s".format(toc - tic))
+    ### Fitting quadratics to both directions of perturbation ###
 
     def quadratic(x, a, b, c):
         return a * x ** 2 + b * x + c
@@ -50,6 +53,8 @@ if __name__ == "__main__":
 
     negative_equation_string = "{:.1f}v$^2$ {:+.1f}v {:+.3e}".format(a2, b2, c2)
 
+    ### Plotting ###
+    
     fig, ax = plt.subplots()
 
     ax.plot(vs, wanders, label="wanders", marker="+", color="c", linestyle="None")

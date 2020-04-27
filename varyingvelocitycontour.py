@@ -1,12 +1,15 @@
+"""
+Generates contour plot for wander for position perturbations in the orbital plane.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 from itertools import product
 
 ast = RotatingAsteroid()
 
+# 100 samples per year for 100 planetary orbits
 end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -22,21 +25,18 @@ def wander_wrapper(vx_offset, vy_offset):
     )
 
 
-if __name__ == "__main__":
-    tic = time.time()
-
+if __name__ == "__main__": # Required for multiprocessing to work properly
     pool = multiprocessing.Pool()
     wanders = np.reshape(
         pool.starmap(wander_wrapper, product(vs, vs)), (points, points), order="F"
     )
     pool.close()
 
-    toc = time.time()
-    print("Time taken: {:.1f} s".format(toc - tic))
-
-    xx, yy = np.meshgrid(vs, vs)
+    ### Plotting ###
 
     fig, ax = plt.subplots()
+
+    xx, yy = np.meshgrid(vs, vs)
 
     contours = ax.contourf(xx, yy, wanders, levels=100, cmap="viridis_r")
     cbar = fig.colorbar(contours, ticks=np.linspace(0, 11, 12))

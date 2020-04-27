@@ -1,12 +1,15 @@
+"""
+Generates plot for wander for position perturbations radially outwards from L4.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 from scipy.optimize import curve_fit
 
 ast = RotatingAsteroid()
 
+# 100 samples per year for 100 planetary orbits
 end_time = 100 * ast.T
 points_per_year = 100
 ts = np.linspace(0, end_time, int(end_time * points_per_year))
@@ -17,6 +20,7 @@ rs = np.linspace(-position_spread, position_spread, points)
 
 
 def wander_wrapper(r_offset):
+    """Wrapper to put correct arguments into wander method for a given radial position perturbation"""
     return ast.wander(
         ts,
         r_0=ast.L4 * (1.0 + r_offset / np.linalg.norm(ast.L4)),
@@ -25,15 +29,12 @@ def wander_wrapper(r_offset):
     )
 
 
-if __name__ == "__main__":
-    tic = time.time()
-
+if __name__ == "__main__":  # Required for multiprocessing to work properly
     pool = multiprocessing.Pool()
     wanders = pool.map(wander_wrapper, rs)
     pool.close()
 
-    toc = time.time()
-    print("Time taken: {:.1f} s".format(toc - tic))
+    ### Fitting quadratics to outward and inward perturbations ###
 
     def quadratic(x, a, b, c):
         return a * x ** 2 + b * x + c
@@ -49,6 +50,8 @@ if __name__ == "__main__":
     )
 
     negative_equation_string = "{:.1f}x$^2$ {:+.1f}x {:+.3e}".format(a2, b2, c2)
+
+    ### Plotting ###
 
     fig, ax = plt.subplots()
 
