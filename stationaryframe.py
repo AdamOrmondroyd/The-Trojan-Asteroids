@@ -152,7 +152,8 @@ class StationaryAsteroid:
         )
 
     def wander(self, t_eval, r_0, v_0, method="Radau"):
-        """Find the maximum distance from L4 point for given initial conditions in the rotating frame"""
+        """Find the maximum distance from L4 point for given initial conditions
+        in the rotating frame"""
         sol = self.trajectory(t_eval, r_0, v_0, method=method)
 
         deltas = sol.y[0:3] - self.l4(t_eval)  # displacements from L4

@@ -30,7 +30,7 @@ def wander_wrapper(z_offset):
 
 
 if __name__ == "__main__":  # Required for multiprocessing to work properly
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     wanders = pool.map(wander_wrapper, zs)
     pool.close()
 

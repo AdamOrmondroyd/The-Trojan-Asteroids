@@ -25,8 +25,8 @@ def wander_wrapper(vx_offset, vy_offset):
     )
 
 
-if __name__ == "__main__": # Required for multiprocessing to work properly
-    pool = multiprocessing.Pool()
+if __name__ == "__main__":  # Required for multiprocessing to work properly
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     wanders = np.reshape(
         pool.starmap(wander_wrapper, product(vs, vs)), (points, points), order="F"
     )

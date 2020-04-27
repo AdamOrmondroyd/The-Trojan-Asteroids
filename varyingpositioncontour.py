@@ -8,9 +8,9 @@ was used to test the performance of the simulation, so timing has been left in.
 import numpy as np
 import matplotlib.pyplot as plt
 from rotatingframe import RotatingAsteroid
-import time
 import multiprocessing
 from itertools import product
+import time
 
 ast = RotatingAsteroid()
 

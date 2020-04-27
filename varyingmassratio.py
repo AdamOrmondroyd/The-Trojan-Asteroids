@@ -38,7 +38,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
     points = 100
     ms = np.linspace(m_min, m_max, points)
 
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     wanders = pool.map(wander_wrapper, ms)
     pool.close()
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
     m_max = 0.044
     ms = np.linspace(m_min, m_max, points)
 
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     wanders = pool.map(wander_wrapper, ms)
     pool.close()
 

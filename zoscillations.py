@@ -71,7 +71,7 @@ ax[1].legend()
 
 if __name__ == "__main__":  # Required for multiprocessing to work properly
 
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     periods = pool.map(time_period_wrapper, zs)
     pool.close()
 
