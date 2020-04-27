@@ -1,15 +1,14 @@
+"""
+Constants required for Trojan asteroid simulations in solar system units
+Contains:
+Gravitational constant G 
+Mass of Jupiter M_JUPITER
+Mass of Sun M_SUN
+Sun-Jupiter distance R_0
+"""
 import numpy as np
-from numpy import pi
 
-G = 4 * pi**2
+G = 4 * np.pi ** 2
+M_JUPITER = 0.001
 M_SUN = 1
-M_J = 0.001
-R = 5.2
-R_SUN = R * M_J / (M_J + M_SUN)
-R_J = R * M_SUN / (M_J + M_SUN)
-W = 2 * pi * (M_J + M_SUN) ** (1 / 2) / R ** (3 / 2)
-T = 2 * pi / W
-
-# Lagrangian points in stationary frame, and at t = 0 in rotating frame
-L4 = np.array([R / 2 - R_SUN, R * np.sqrt(3) / 2, 0])
-L5 = np.array([R / 2 - R_SUN, -R * np.sqrt(3) / 2, 0])
+R_0 = 5.2

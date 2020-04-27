@@ -1,88 +1,106 @@
+"""
+Generates plots for wander due to varying planet mass, starting with a radial perturbation of 1e-4 au
+"""
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy import pi
-import rotatingframe
+from rotatingframe import RotatingAsteroid
+import multiprocessing
 from scipy.optimize import curve_fit
 
-### Starts to die at around m=0.36
-m_min = 0.001
-m_max = 0.025
-points = 100
-ms = np.linspace(m_min, m_max, points)
-wanders = np.zeros(points)
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
 
-for i in range(points):
-    print(i)
-    rotatingframe.M_J = ms[i]
-    rotatingframe.R = 5.2
-    rotatingframe.R_SUN = rotatingframe.R * ms[i] / (ms[i] + rotatingframe.M_SUN)
-    rotatingframe.R_J = (
-        rotatingframe.R * rotatingframe.M_SUN / (ms[i] + rotatingframe.M_SUN)
-    )
-    rotatingframe.W = (
-        2 * pi * (ms[i] + rotatingframe.M_SUN) ** (1 / 2) / rotatingframe.R ** (3 / 2)
-    )
-    rotatingframe.T = 2 * pi / rotatingframe.W
-
-    rotatingframe.L4 = np.array(
-        [rotatingframe.R / 2 - rotatingframe.R_SUN, rotatingframe.R * np.sqrt(3) / 2, 0]
-    )
-    rotatingframe.L5 = np.array(
-        [
-            rotatingframe.R / 2 - rotatingframe.R_SUN,
-            -rotatingframe.R * np.sqrt(3) / 2,
-            0,
-        ]
-    )
-
-    rotatingframe.r_sun = np.array([-rotatingframe.R_SUN, 0, 0])
-    rotatingframe.r_j = np.array([rotatingframe.R_J, 0, 0])
-
-    print(rotatingframe.M_J)
-
-    end_time = 100 * rotatingframe.T
+def wander_wrapper(m):
+    """Wrapper to find wander for given planet mass m, for asteroid starting 1e-4 au radially outwards of L4"""
+    ast = RotatingAsteroid(M_P=m)
+    # 100 samples per year for 100 planetary orbits
+    end_time = 100 * ast.T
     points_per_year = 100
     ts = np.linspace(0, end_time, int(end_time * points_per_year))
-
-    wanders[i] = rotatingframe.max_wander(
+    return ast.wander(
         ts,
-        r_0=rotatingframe.L4,
+        r_0=ast.L4 * (1 + 1e-4 / np.linalg.norm(ast.L4)),
         v_0=np.array([0, 0, 0]),
-        stability_point=rotatingframe.L4,
+        stability_point=ast.L4,
     )
 
 
-def quadratic(x, a, b, c):
-    """Quadratic for curve fit"""
-    return a * x ** 2 + b * x + c
+def exponential_decay(x, a, b):
+    """exponential decay for curve fitting"""
+    return a / x ** 0.5 + b
 
 
-def linear(x, a, b):
-    return a * x + b
+if __name__ == "__main__":  # Required for multiprocessing to work properly
+    ### Smaller masses ###
 
+    m_min = 1e-5
+    m_max = 1e-3
+    points = 100
+    ms = np.linspace(m_min, m_max, points)
 
-(a, b, c), pcov = curve_fit(quadratic, ms, wanders)
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+    wanders = pool.map(wander_wrapper, ms)
+    pool.close()
 
-print("a: " + str(a))
-print("b: " + str(b))
-print("c: " + str(c))
+    ### Fit 1/√x ###
 
-(d, e), pcov2 = curve_fit(linear, ms, wanders)
+    (a, b), pcov = curve_fit(exponential_decay, ms, wanders)
 
-print("d: " + str(d))
-print("e: " + str(e))
+    equation_string = "{:.2e}/√m + {:.2e}".format(a, b)
 
-fig, ax = plt.subplots()
+    ### Plotting ###
 
-ax.plot(ms, wanders, label="wanders", marker="+", linestyle="None")
-ax.plot(ms, quadratic(ms, a, b, c), label="quadratic fit")
+    ax[0].plot(ms, wanders, label="wanders", color="c", marker="+", linestyle="None")
+    ax[0].plot(
+        ms,
+        exponential_decay(ms, a, b),
+        label=equation_string,
+        color="k",
+        linestyle="--",
+    )
 
-ax.set(
-    title="Varying the mass ratio",
-    xlabel="M$_{\mathrm{J}}$/M$_{\odot}$",
-    ylabel="Maximum wander / au",
-)
-ax.legend()
-plt.savefig("mass.png")
-plt.show()
+    ax[0].set(
+        title="M$_\mathrm{{P}}$ from {}M$_\odot$ to {}M$_\odot$".format(m_min, m_max),
+        xlabel="M$_{\mathrm{P}}$/M$_{\odot}}$",
+        ylabel="wander / au",
+    )
+
+    ### Larger masses ###
+
+    m_min = 0.0
+    m_max = 0.044
+    ms = np.linspace(m_min, m_max, points)
+
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+    wanders = pool.map(wander_wrapper, ms)
+    pool.close()
+
+    ### Plotting ###
+
+    ax[1].plot(
+        ms, wanders, label="wanders", marker="+", color="c", linestyle="None",
+    )
+
+    ax[1].set(
+        title="M$_\mathrm{{P}}$ from {}M$_\odot$ to {}M$_\odot$".format(m_min, m_max),
+        xlabel="M$_{\mathrm{P}}$/M$_{\odot}}$",
+        ylabel="wander / au",
+    )
+
+    handles, labels = ax[0].get_legend_handles_labels()
+    fig.legend(
+        handles,
+        labels,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.045),
+        ncol=len(labels),
+    )
+
+    fig.tight_layout()
+
+    fig.subplots_adjust(bottom=0.2)
+
+    filename = "plots\\mass_wanders"
+    plt.savefig(filename + ".png")
+    plt.savefig(filename + ".eps")
+    plt.show()

@@ -2,6 +2,5 @@ env
 .vscode
 *.mp4
 *.npy
-*.png
 *.pptx
 *.zip

@@ -1,12 +1,20 @@
+"""
+Generates a video of the asteroids in the stationary frame.
+
+Asteroids are perturbed about L4 and L5, and their behaviour in the orbital plane is recorded
+as an mp4 file.
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
-from stationaryframe import asteroid, r_sun, r_j, l_4, l_5, omega_cross
-from constants import L4, L5, R, R_SUN, R_J, T, W
+from stationaryframe import StationaryAsteroid
 import multiprocessing
 
-run_time = 10 * T
+ast = StationaryAsteroid()
+
+# Run for 10 planetary orbits
+run_time = 10 * ast.T
 fps = 30
 seconds_per_year = 0.2
 num_greeks = 100
@@ -14,7 +22,7 @@ num_trojans = 100
 position_spread = 0.1
 velocity_spread = 0.1
 save_animation = True
-file_name = "movie.mp4"
+file_name = "outputs\\movie.mp4"
 
 num_points = int(run_time * fps * seconds_per_year)
 ts = np.linspace(0, run_time, num_points)
@@ -38,13 +46,11 @@ def random_asteroid_wrapper(greek):
     v_offset = (np.random.rand(3) - 0.5) * velocity_spread
 
     if greek:
-        r_0 = L4 + r_offset
+        r_0 = ast.l4(0) + r_offset
     else:
-        r_0 = L5 + r_offset
+        r_0 = ast.l5(0) + r_offset
 
-    v_0 = omega_cross(r_0) + v_offset
-
-    return asteroid(ts, r_0, v_0)
+    return ast.trajectory(ts, r_0, v_0=ast.omega_cross(r_0) + v_offset)
 
 
 if __name__ == "__main__":
@@ -71,10 +77,10 @@ if __name__ == "__main__":
     (sun_line,) = ax.plot(
         [], [], label="sun", color="orange", marker="*", markersize=20, linestyle="None"
     )
-    (j_line,) = ax.plot(
+    (p_line,) = ax.plot(
         [],
         [],
-        label="Jupiter",
+        label="Planet",
         color="red",
         marker="o",
         markersize=10,
@@ -112,14 +118,14 @@ if __name__ == "__main__":
     ax.legend(loc="upper right", frameon=False, prop={"size": 10})
 
     def animate(i):
-        sun_position = r_sun(ts[i])
+        sun_position = ast.r_sun(ts[i])
         sun_line.set_data(sun_position[0], sun_position[1])
-        j_position = r_j(ts[i])
-        j_line.set_data(j_position[0], j_position[1])
+        p_position = ast.r_p(ts[i])
+        p_line.set_data(p_position[0], p_position[1])
 
-        l4 = l_4(ts[i])
+        l4 = ast.l4(ts[i])
         l4_line.set_data(l4[0], l4[1])
-        l5 = l_5(ts[i])
+        l5 = ast.l5(ts[i])
         l5_line.set_data(l5[0], l5[1])
 
         greeks_line.set_data(greek_xs[:, i], greek_ys[:, i])
@@ -128,7 +134,7 @@ if __name__ == "__main__":
         time_text.set_text(str(np.round(ts[i], 1)) + " years")
         return (
             sun_line,
-            j_line,
+            p_line,
             l4_line,
             l5_line,
             greeks_line,
