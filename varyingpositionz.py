@@ -58,7 +58,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
     )
     ax.legend()
 
-    filename = "plots\\position_wanders_z"
-    plt.savefig(filename + ".png")
-    plt.savefig(filename + ".eps")
+    # filename = "plots\\position_wanders_z"
+    # plt.savefig(filename + ".png")
+    # plt.savefig(filename + ".eps")
     plt.show()

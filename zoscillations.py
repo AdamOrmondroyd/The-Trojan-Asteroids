@@ -96,7 +96,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
 
     fig.tight_layout()
 
-    filename = "plots\\z_oscillations"
-    plt.savefig(filename + ".png")
-    plt.savefig(filename + ".eps")
+    # filename = "plots\\z_oscillations"
+    # plt.savefig(filename + ".png")
+    # plt.savefig(filename + ".eps")
     plt.show()

@@ -151,11 +151,11 @@ if __name__ == "__main__":
     )
     print("animated")
 
-    if save_animation:
-        writer = animation.FFMpegWriter(
-            fps=fps, metadata=dict(artist="Adam Ormondroyd"),  # bitrate=1800
-        )
+    # if save_animation:
+    #     writer = animation.FFMpegWriter(
+    #         fps=fps, metadata=dict(artist="Adam Ormondroyd"),  # bitrate=1800
+    #     )
 
-        anim.save(file_name, writer=writer)
-        print("saved")
+    #     anim.save(file_name, writer=writer)
+    #     print("saved")
     plt.show()

@@ -43,7 +43,8 @@ ax.set(
     xlabel="time/years",
     ylabel="specific energy/(au/year)²",
 )
-filename = "plots\\energy_variation"
-plt.savefig(filename + ".png")
-plt.savefig(filename + ".eps")
+
+# filename = "plots\\energy_variation"
+# plt.savefig(filename + ".png")
+# plt.savefig(filename + ".eps")
 plt.show()

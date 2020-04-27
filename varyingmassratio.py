@@ -100,7 +100,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
 
     fig.subplots_adjust(bottom=0.2)
 
-    filename = "plots\\mass_wanders"
-    plt.savefig(filename + ".png")
-    plt.savefig(filename + ".eps")
+    # filename = "plots\\mass_wanders"
+    # plt.savefig(filename + ".png")
+    # plt.savefig(filename + ".eps")
     plt.show()
