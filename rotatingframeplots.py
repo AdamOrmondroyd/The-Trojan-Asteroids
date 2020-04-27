@@ -180,7 +180,7 @@ fig.tight_layout()
 handles, labels = ax[1, 1].get_legend_handles_labels()
 fig.legend(handles, labels, loc="center", ncol=len(labels))
 
-# filename = "plots\\rotating_frame_plots"
-# plt.savefig(filename + ".png")
-# plt.savefig(filename + ".eps")
+filename = "plots\\rotating_frame_plots"
+plt.savefig(filename + ".png")
+plt.savefig(filename + ".eps")
 plt.show()

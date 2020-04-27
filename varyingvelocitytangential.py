@@ -31,7 +31,7 @@ def wander_wrapper(v_offset):
     )
 
 
-if __name__ == "__main__":  # Required for multiprocessing to work properly
+if __name__ == "__main__": # Required for multiprocessing to work properly
     pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     wanders = pool.map(wander_wrapper, vs)
     pool.close()
@@ -54,7 +54,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
     negative_equation_string = "{:.1f}v$^2$ {:+.1f}v {:+.3e}".format(a2, b2, c2)
 
     ### Plotting ###
-
+    
     fig, ax = plt.subplots()
 
     ax.plot(vs, wanders, label="wanders", marker="+", color="c", linestyle="None")
@@ -84,7 +84,7 @@ if __name__ == "__main__":  # Required for multiprocessing to work properly
     )
     ax.legend()
 
-    # filename = "plots\\velocity_wanders_perpendicular_L4"
-    # plt.savefig(filename + ".png")
-    # plt.savefig(filename + ".eps")
+    filename = "plots\\velocity_wanders_perpendicular_L4"
+    plt.savefig(filename + ".png")
+    plt.savefig(filename + ".eps")
     plt.show()
