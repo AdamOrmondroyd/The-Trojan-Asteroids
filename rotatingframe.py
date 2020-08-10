@@ -12,7 +12,8 @@ from constants import G, M_JUPITER, M_SUN, R_0
 
 
 class RotatingAsteroid:
-    """Simulation of a Trojan asteroid in the rotating frame
+    """
+    Simulation of a Trojan asteroid in the rotating frame
 
     The class should be initialised with the desired planetary mass
     and Sun-planet distance R in solar system units.
